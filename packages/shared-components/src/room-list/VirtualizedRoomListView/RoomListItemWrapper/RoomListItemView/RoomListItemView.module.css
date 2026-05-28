@@ -49,7 +49,7 @@
 
     /* Preserve selected background on hover/focus/menu-open states */
     &.selected .container {
-        background-color: var(--cpd-color-bg-action-tertiary-selected);
+        background-color: color-mix(in srgb, var(--cpd-color-bg-accent-rest) 22%, transparent);
     }
 
     .hoverMenu {
@@ -93,21 +93,8 @@
 
 .selected {
     .container {
-        background-color: var(--cpd-color-bg-action-tertiary-selected);
+        background-color: color-mix(in srgb, var(--cpd-color-bg-accent-rest) 14%, transparent);
         color: var(--cpd-color-text-primary);
-    }
-
-    /* Visual marker at the left on the container when the room is selected */
-    .container::before {
-        content: "";
-        position: absolute;
-        /* Marker height is 34px, room list item height is 44px. So position is at 5px at and bottom + padding */
-        top: calc(5px + var(--padding-top));
-        bottom: calc(5px + var(--padding-bottom));
-        left: 0;
-        width: 4px;
-        background-color: var(--cpd-color-bg-accent-rest);
-        border-radius: 0 8px 8px 0;
     }
 }
 
