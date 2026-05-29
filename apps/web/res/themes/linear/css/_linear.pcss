@@ -967,6 +967,197 @@ body {
     border-top: 1px solid #ededef !important;
 }
 
+/* ── BaseCard header (поиск + X в шапке правой панели) ──────────────────── */
+/* Сейчас поиск рендерится как отдельная иконка-кружок + input + X. Делаем
+   единый rounded pill, иконку поглощаем внутрь input'а. */
+.mx_BaseCard_header {
+    padding: 12px 16px !important;
+    gap: 8px !important;
+    align-items: center !important;
+}
+
+/* Скрыть «лишнюю» иконку поиска снаружи input'а (если есть отдельный icon-button) */
+.mx_BaseCard_header > [class*="searchIcon"],
+.mx_BaseCard_header > button[aria-label*="Поиск"],
+.mx_BaseCard_header > [role="button"][aria-label*="Search"] {
+    display: none !important;
+}
+
+/* Search component (Compound) — единый pill во всю ширину.
+   ВАЖНО: стилизуем ТОЛЬКО внутренний Compound `._search_` элемент, иначе
+   получаем два вложенных pill'а (форма + Compound). Форму делаем прозрачной. */
+.mx_BaseCard_header form,
+.mx_BaseCard_header [role="search"],
+.mx_BaseCard_header .mx_RoomSummaryCard_search {
+    flex: 1 !important;
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    display: block !important;
+    min-height: 0 !important;
+}
+
+/* Compound's _search_ — это сам pill */
+.mx_BaseCard_header [class*="_search_"] {
+    background-color: #f4f4f5 !important;
+    border: none !important;
+    border-radius: 999px !important;
+    padding: 0 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 36px !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Compound's search icon inside the pill */
+.mx_BaseCard_header [class*="_search_"] [class*="_icon_"],
+.mx_BaseCard_header [class*="_search_"] svg:first-child {
+    color: #71717a !important;
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0;
+}
+
+/* Compound's input inside the pill — никакого фона/рамки, только текст */
+.mx_BaseCard_header [class*="_search_"] [class*="_input_"],
+.mx_BaseCard_header [class*="_search_"] input {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+    color: #18181b !important;
+    width: 100% !important;
+    min-width: 0;
+}
+
+.mx_BaseCard_header [class*="_search_"]:focus-within {
+    background-color: #ededef !important;
+}
+
+/* Compound's clear-button (X) внутри Search — спокойный серый, маленький,
+   не «вылезает» за пилюлю. */
+.mx_BaseCard_header [class*="_search_"] button,
+.mx_BaseCard_header [class*="_search_"] [role="button"],
+.mx_BaseCard_header [class*="_search_"] [class*="cancel"],
+.mx_BaseCard_header [class*="_search_"] [class*="clear"] {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 20px !important;
+    height: 20px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    color: #71717a !important;
+    flex-shrink: 0;
+}
+
+.mx_BaseCard_header [class*="_search_"] button svg,
+.mx_BaseCard_header [class*="_search_"] [role="button"] svg {
+    width: 14px !important;
+    height: 14px !important;
+    color: #71717a !important;
+}
+
+.mx_BaseCard_header [class*="_search_"] button:hover {
+    background-color: rgba(0, 0, 0, 0.06) !important;
+    color: #18181b !important;
+}
+
+/* ── Иконки пунктов меню — ровная колонка слева ──────────────────────────── */
+/* Жёсткий каркас flex: первый ребёнок = коробка 24px, потом gap 16px, потом
+   текст. Это гарантирует что текст всех пунктов начинается с одной x-линии. */
+.mx_RoomSummaryCard button,
+.mx_RoomSummaryCard [role="menuitem"] {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    padding: 0 20px !important;
+}
+
+/* Первый ребёнок (иконка/контейнер иконки) — фиксированная коробка 24px */
+.mx_RoomSummaryCard button > *:first-child,
+.mx_RoomSummaryCard [role="menuitem"] > *:first-child {
+    width: 24px !important;
+    height: 24px !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+}
+
+/* Сам SVG внутри коробки — 18×18 центром */
+.mx_RoomSummaryCard button > *:first-child svg,
+.mx_RoomSummaryCard [role="menuitem"] > *:first-child svg,
+.mx_RoomSummaryCard button > svg:first-child,
+.mx_RoomSummaryCard [role="menuitem"] > svg:first-child {
+    width: 18px !important;
+    height: 18px !important;
+    color: #71717a !important;
+    display: block !important;
+}
+
+/* X-кнопка справа от поиска — больше отступ от края, цвет серее */
+.mx_BaseCard_close {
+    color: #71717a !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+    padding: 6px !important;
+    margin-right: 4px;
+}
+
+.mx_BaseCard_close:hover {
+    background-color: #f4f4f5 !important;
+    color: #0a0a0a !important;
+}
+
+/* ── Badges (Зашифровано / Новые участники не видят историю) — тихий серый ── */
+/* Compound Badge: ._badge_10dml_8 с data-kind="blue" (lavender по умолчанию).
+   Перекрашиваем в нейтральный серый — фон, текст, иконка. */
+[class*="_badge_"][data-kind="blue"],
+.mx_RoomSummaryCard_badges [class*="_badge_"],
+.mx_RoomSummaryCard_badges > * {
+    background: #f4f4f5 !important;
+    color: #52525b !important;
+    border: none !important;
+    border-radius: 999px !important;
+    font-size: 12px !important;
+    font-weight: 450 !important;
+}
+
+[class*="_badge_"][data-kind="blue"] svg,
+.mx_RoomSummaryCard_badges [class*="_badge_"] svg,
+.mx_RoomSummaryCard_badges > * svg {
+    color: #71717a !important;
+}
+
+/* ── "Добавить тему" — тихий серый текст-кнопка вместо акцентной ссылки ──── */
+.mx_RoomSummaryCard_topic button,
+.mx_RoomSummaryCard_topic a,
+.mx_RoomSummaryCard_topic [role="button"],
+button[aria-label*="Добавить тему"],
+[class*="add_topic"],
+.mx_RoomSummaryCard_topic_container button {
+    color: #71717a !important;
+    background-color: transparent !important;
+    font-size: 13px !important;
+    font-weight: 450 !important;
+    text-decoration: none !important;
+}
+
+.mx_RoomSummaryCard_topic button:hover,
+.mx_RoomSummaryCard_topic a:hover {
+    color: #18181b !important;
+    background-color: transparent !important;
+}
+
 /* Search input inside the room summary */
 .mx_RoomSummaryCard_search input {
     background-color: #ffffff !important;
