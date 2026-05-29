@@ -166,6 +166,9 @@ class LoggedInView extends React.Component<IProps, IState> {
 
     public componentDidMount(): void {
         document.addEventListener("keydown", this.onNativeKeyDown, false);
+        // Capture-phase Esc handler — fires before composer/inputs can swallow it.
+        // Routes Esc → HomePage regardless of focused element.
+        document.addEventListener("keydown", this.onCaptureEscape, true);
         LegacyCallHandler.instance.addListener(LegacyCallHandlerEvent.CallState, this.onCallState);
 
         this.updateServerNoticeEvents();
@@ -254,6 +257,7 @@ class LoggedInView extends React.Component<IProps, IState> {
 
     public componentWillUnmount(): void {
         document.removeEventListener("keydown", this.onNativeKeyDown, false);
+        document.removeEventListener("keydown", this.onCaptureEscape, true);
         LegacyCallHandler.instance.removeListener(LegacyCallHandlerEvent.CallState, this.onCallState);
         this._matrixClient.removeListener(ClientEvent.AccountData, this.onAccountData);
         this._matrixClient.removeListener(ClientEvent.Sync, this.onSync);
@@ -503,6 +507,24 @@ class LoggedInView extends React.Component<IProps, IState> {
         // events caught while bubbling up on the root element
         // of this component, so something must be focused.
         this.onKeyDown(ev);
+    };
+
+    /**
+     * Capture-phase Esc handler. Runs before any input/composer/editor can
+     * stopPropagation, so we can reliably navigate Home from any focus state.
+     * Bails out if:
+     *  - a modal is open (let the modal handle Esc to close itself)
+     *  - already on the home page (nothing to do)
+     */
+    private onCaptureEscape = (ev: KeyboardEvent): void => {
+        if (ev.key !== "Escape") return;
+        if (ev.ctrlKey || ev.metaKey || ev.altKey || ev.shiftKey) return;
+        if (Modal.hasDialogs()) return;
+        if (this.props.page_type === PageTypes.HomePage) return;
+
+        ev.preventDefault();
+        ev.stopPropagation();
+        dis.dispatch({ action: Action.ViewHomePage });
     };
 
     private onNativeKeyDown = (ev: KeyboardEvent): void => {

@@ -28,7 +28,7 @@ import SettingsStore from "./settings/SettingsStore";
 import ThemeWatcher from "./settings/watchers/ThemeWatcher";
 import { FontWatcher } from "./settings/watchers/FontWatcher";
 
-export const DEFAULT_THEME = "light";
+export const DEFAULT_THEME = "linear";
 const HIGH_CONTRAST_THEMES: Record<string, string> = {
     light: "light-high-contrast",
 };
@@ -89,6 +89,7 @@ export function isHighContrastTheme(theme: string): boolean {
 export function enumerateThemes(): { [key: string]: string } {
     const BUILTIN_THEMES = {
         "light": _t("common|light"),
+        "linear": "Linear",
         "light-high-contrast": _t("theme|light_high_contrast"),
         "dark": _t("common|dark"),
     };
@@ -364,7 +365,8 @@ export async function setTheme(theme?: string): Promise<void> {
      */
     document.body.classList.remove("cpd-theme-light", "cpd-theme-dark", "cpd-theme-light-hc", "cpd-theme-dark-hc");
 
-    let compoundThemeClassName = `cpd-theme-` + (stylesheetName.includes("light") ? "light" : "dark");
+    let compoundThemeClassName =
+        `cpd-theme-` + (stylesheetName.includes("light") || stylesheetName === "linear" ? "light" : "dark");
     // Always respect user OS preference!
     if (isHighContrastTheme(theme) || window.matchMedia("(prefers-contrast: more)").matches) {
         compoundThemeClassName += "-hc";

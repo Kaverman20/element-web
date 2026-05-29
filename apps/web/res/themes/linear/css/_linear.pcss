@@ -1,0 +1,84 @@
+/*
+ * Linear theme — minimalist 2026 product-tool aesthetic.
+ *
+ * Step 1: typography + palette only. No layout changes yet.
+ *
+ * Palette (true-to-Linear, slightly toned):
+ *   Canvas (white):     #FFFFFF
+ *   Surface subtle:     #FAFAFA  (sidebar/headers)
+ *   Surface hover:      #F4F4F5  (rest of greys are zinc scale)
+ *   Border subtle:      #E4E4E7
+ *   Text primary:       #0A0A0A
+ *   Text secondary:     #71717A
+ *   Text tertiary:      #A1A1AA
+ *   Accent (Linear):    #5E6AD2
+ *   Accent hover:       #4F5BC2
+ */
+
+/* ── Compound design tokens ──────────────────────────────────────────────── */
+:root {
+    --cpd-color-bg-canvas-default: #ffffff;
+    --cpd-color-bg-subtle-secondary: #fafafa;
+    --cpd-color-bg-subtle-primary: #f4f4f5;
+
+    --cpd-color-text-primary: #0a0a0a;
+    --cpd-color-text-secondary: #71717a;
+
+    --cpd-color-text-action-accent: #5e6ad2;
+    --cpd-color-icon-accent-primary: #5e6ad2;
+    --cpd-color-bg-accent-rest: #5e6ad2;
+    --cpd-color-bg-accent-hovered: #4f5bc2;
+    --cpd-color-bg-accent-subtle: rgba(94, 106, 210, 0.1);
+    --cpd-color-border-interactive-primary: #e4e4e7;
+}
+
+/* ── Typography ──────────────────────────────────────────────────────────── */
+/* Use system font stack with Inter as primary — Linear/Vercel approach.
+   No serif anywhere. Slightly tighter letter-spacing on headings. */
+html,
+body {
+    font-family:
+        "Inter", "InterVariable", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings:
+        "cv02", "cv03", "cv04", "cv11"; /* Inter stylistic tweaks */
+}
+
+/* Headings — tight tracking, like Linear */
+h1, h2, h3, h4,
+.mx_RoomHeader h1,
+.mx_RoomHeader_nametext {
+    letter-spacing: -0.015em !important;
+    color: #0a0a0a !important;
+}
+
+/* Body text — slightly softer black for readability */
+body,
+.mx_EventTile_content,
+.mx_EventTile_body {
+    color: #18181b;
+}
+
+/* Senders — clear hierarchy via weight, not colour */
+.mx_DisambiguatedProfile_displayName,
+.mx_EventTile_senderDetails .mx_DisambiguatedProfile_displayName {
+    color: #0a0a0a !important;
+    font-weight: 600 !important;
+}
+
+/* Timestamps / secondary meta */
+.mx_MessageTimestamp,
+.mx_EventTile_timestamp {
+    color: #a1a1aa !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+}
+
+/* ── Selection ───────────────────────────────────────────────────────────── */
+::selection {
+    background-color: rgba(94, 106, 210, 0.18);
+    color: #0a0a0a;
+}
