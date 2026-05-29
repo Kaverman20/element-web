@@ -558,8 +558,9 @@ export default class ScrollPanel extends React.Component<IProps> {
         // saved is to do the scroll, then save the updated state. (Calculating
         // it ourselves is hard, and we can't rely on an onScroll callback
         // happening, since there may be no user-visible change here).
+        // Linear: this is a user-triggered jump ("go to latest"), so animate it.
         const sn = this.getScrollNode();
-        sn.scrollTop = sn.scrollHeight;
+        sn.scrollTo({ top: sn.scrollHeight, behavior: "smooth" });
         this.saveScrollState();
     };
 
@@ -625,6 +626,9 @@ export default class ScrollPanel extends React.Component<IProps> {
             // not giving enough content below the trackedNode to scroll downwards
             // enough, so it ends up in the top of the viewport.
             debuglog("scrollToken: setting scrollTop", { offsetBase, pixelOffset, offsetTop: trackedNode.offsetTop });
+            // NOTE: kept instant on purpose — TimelinePanel calls doScroll twice
+            // (sync + post-rAF) when jumping to an event, so smooth animations
+            // collide and either miss the target or no-op entirely.
             scrollNode.scrollTop = trackedNode.offsetTop - scrollNode.clientHeight * offsetBase + pixelOffset;
             this.saveScrollState();
         }
