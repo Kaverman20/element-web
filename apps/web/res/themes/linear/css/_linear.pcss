@@ -211,3 +211,149 @@ body,
     color: #71717a !important;
     font-weight: 400 !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* Шаг 3 — Лента сообщений в Linear-стиле                                     */
+/* ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Chat canvas — pure white (sidebar is #FAFAFA, so contrast reads) ────── */
+.mx_RoomView,
+.mx_RoomView_body,
+.mx_MainSplit,
+.mx_ScrollPanel {
+    background-color: #ffffff !important;
+}
+
+/* ── Message tile — comfortable reading width and rhythm ─────────────────── */
+.mx_EventTile {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+
+/* Telegram-style: no fade on hover, no fade when the floating action bar opens.
+   Only the explicit "selected" state (right-click / context menu open) lights
+   up the row, with a smooth fade. */
+.mx_EventTile,
+.mx_EventTile .mx_EventTile_line {
+    transition: background-color 0.15s ease;
+}
+
+.mx_EventTile:hover,
+.mx_EventTile:hover .mx_EventTile_line,
+.mx_EventTile.mx_EventTile_actionBarFocused,
+.mx_EventTile.mx_EventTile_actionBarFocused .mx_EventTile_line {
+    background-color: transparent !important;
+}
+
+/* Selected (right-click / opened context menu) — soft grey on the whole row.
+   Paint the background on the OUTER .mx_EventTile (full row width) and keep
+   the inner .mx_EventTile_line transparent so the grey bleeds edge-to-edge. */
+.mx_EventTile.mx_EventTile_selected {
+    background-color: #f4f4f5 !important;
+}
+
+.mx_EventTile.mx_EventTile_selected > .mx_EventTile_line,
+.mx_EventTile.mx_EventTile_selected .mx_EventTile_line {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    /* Element adds +20px to padding-inline-start when selected (for its purple
+       inset bar). Restore the base padding so the text doesn't shift. */
+    padding-inline-start: var(--EventTile_group_line-spacing-inline-start) !important;
+}
+
+/* ── Sender name — sharp, near-black, only on first message in a group ──── */
+.mx_DisambiguatedProfile_displayName {
+    color: #0a0a0a !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    letter-spacing: -0.005em;
+}
+
+/* ── Body text — softer than pure black, generous line-height ────────────── */
+.mx_EventTile_body,
+.mx_EventTile_content,
+.mx_MTextBody {
+    color: #27272a !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    letter-spacing: -0.003em;
+}
+
+/* ── Timestamp — quiet 12px next to the name, muted grey ─────────────────── */
+.mx_MessageTimestamp {
+    color: #a1a1aa !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Telegram-style timestamp positioning ────────────────────────────────── */
+/* Our injected inline timestamp lives inside .mx_EventTile_line and pins to
+   the right edge of the message row. The original group-line timestamp (and
+   any hover-timestamp in the avatar gutter) get hidden so we have one. */
+
+.mx_EventTile_line {
+    position: relative !important;
+    padding-right: 56px !important; /* room for the right-anchored timestamp */
+}
+
+.mx_EventTile_inlineTimestamp {
+    position: absolute !important;
+    right: 12px;
+    top: 6px; /* aligns with the first text line baseline */
+    pointer-events: auto;
+    line-height: 1;
+}
+
+.mx_EventTile_inlineTimestamp .mx_MessageTimestamp {
+    color: #a1a1aa !important;
+    font-size: 11px !important;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Hide the original group-line timestamp (the one next to the sender name).
+   We render our own on the message row instead, Telegram-style. */
+.mx_EventTile .mx_EventTile_line > .mx_MessageTimestamp,
+.mx_EventTile_senderDetails > .mx_MessageTimestamp {
+    display: none !important;
+}
+
+/* Hide the hover-only timestamp/avatar that Element draws in the avatar
+   gutter for continuation rows — replaced by our inline timestamp. */
+.mx_EventTile_continuation .mx_EventTile_avatar,
+.mx_EventTile_continuation > .mx_BaseAvatar {
+    display: none !important;
+}
+
+/* Tighten continuation rows so they read as one paragraph from the same person */
+.mx_EventTile_continuation {
+    margin-top: 0 !important;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+}
+
+/* ── Day separator («Сегодня», «Вчера») — small, centred, hair-thin rules ── */
+.mx_TimelineSeparator {
+    color: #71717a !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.mx_TimelineSeparator hr {
+    border-color: #e4e4e7 !important;
+    border-width: 1px 0 0 0 !important;
+}
+
+/* ── Action bar on hover (reactions/reply/edit) — clean white card ───────── */
+.mx_MessageActionBar {
+    background-color: #ffffff !important;
+    border: 1px solid #e4e4e7 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.mx_MessageActionBar_iconButton:hover {
+    background-color: #f4f4f5 !important;
+}

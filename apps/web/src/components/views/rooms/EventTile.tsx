@@ -1375,6 +1375,10 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                         "onMouseLeave": this.onMouseLeave,
                         "onFocus": this.onFocusWithin,
                         "onBlur": this.onBlurWithin,
+                        // Linear: open context menu on right-click anywhere
+                        // on the row — including avatar / sender name — not
+                        // only inside the message line.
+                        "onContextMenu": this.onContextMenu,
                     },
                     <>
                         {ircTimestamp}
@@ -1385,12 +1389,15 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                             id={this.id}
                             className={lineClasses}
                             key="mx_EventTile_line"
-                            onContextMenu={this.onContextMenu}
                         >
                             {this.renderContextMenu()}
                             {groupTimestamp}
                             {groupPadlock}
                             {replyChain}
+                            {/* Telegram-style: inline timestamp anchored right
+                                on every message, hidden via CSS on header row
+                                where groupTimestamp already shows. */}
+                            <span className="mx_EventTile_inlineTimestamp">{messageTimestamp}</span>
                             {renderTile(this.context.timelineRenderingType, {
                                 ...this.props,
 
