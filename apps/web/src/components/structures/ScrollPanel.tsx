@@ -558,9 +558,11 @@ export default class ScrollPanel extends React.Component<IProps> {
         // saved is to do the scroll, then save the updated state. (Calculating
         // it ourselves is hard, and we can't rely on an onScroll callback
         // happening, since there may be no user-visible change here).
-        // Linear: this is a user-triggered jump ("go to latest"), so animate it.
+        // NOTE: kept instant. A smooth animation races with loadTimeline's
+        // post-load render and leaves the user at the top instead of bottom
+        // when jumping to a pinned/permalinked event.
         const sn = this.getScrollNode();
-        sn.scrollTo({ top: sn.scrollHeight, behavior: "smooth" });
+        sn.scrollTop = sn.scrollHeight;
         this.saveScrollState();
     };
 

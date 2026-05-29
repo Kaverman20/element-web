@@ -70,14 +70,34 @@ export function PinnedMessageBanner({ room, permalinkCreator }: PinnedMessageBan
     const onBannerClick = (): void => {
         PosthogTrackers.trackInteraction("PinnedMessageBannerClick");
 
+        const targetEventId = pinnedEvent.getId();
+
         // Scroll to the pinned message
         dis.dispatch<ViewRoomPayload>({
             action: Action.ViewRoom,
-            event_id: pinnedEvent.getId(),
+            event_id: targetEventId,
             highlighted: true,
             room_id: room.roomId,
             metricsTrigger: undefined, // room doesn't change
         });
+
+        // Fallback: ViewRoom is a no-op when event_id equals the currently
+        // viewed one (Element bails out — no reload, no scroll). After a
+        // pinned click the user expects to jump back to the message no matter
+        // what, so look up the tile by data-event-id and scroll to it
+        // directly. Retry a few times to cover async timeline rendering.
+        if (targetEventId) {
+            const scrollToTile = (attemptsLeft: number): void => {
+                const tile = document.querySelector<HTMLElement>(`[data-event-id="${CSS.escape(targetEventId)}"]`);
+                if (tile) {
+                    tile.scrollIntoView({ block: "center", behavior: "instant" });
+                } else if (attemptsLeft > 0) {
+                    setTimeout(() => scrollToTile(attemptsLeft - 1), 80);
+                }
+            };
+            // Defer past the dispatch tick, then retry up to ~480ms total.
+            setTimeout(() => scrollToTile(6), 0);
+        }
 
         // Cycle through the pinned messages
         // When we reach the first message, we go back to the last message
