@@ -112,3 +112,102 @@ body,
     background-color: rgba(94, 106, 210, 0.18);
     color: #0a0a0a;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* Шаг 2 — Сайдбар в Linear-стиле                                             */
+/* ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Two-plane separation: sidebar slightly off-white, chat pure white ────── */
+.mx_LeftPanel_newRoomList,
+.mx_RoomListPanel,
+.mx_LeftPanel_roomListWrapper {
+    background-color: #fafafa !important;
+}
+
+/* Crisp 1px boundary between sidebar and chat (no shadow) */
+.mx_RoomListPanel,
+.mx_LeftPanel {
+    border-right: 1px solid #e4e4e7 !important;
+}
+
+/* ── Search input — quiet, flat, square-ish ──────────────────────────────── */
+.mx_RoomSearch {
+    background-color: #ffffff !important;
+    border: 1px solid #e4e4e7 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    transition: border-color 0.12s ease;
+}
+
+.mx_RoomSearch:hover {
+    border-color: #d4d4d8 !important;
+}
+
+.mx_RoomSearch:focus-within {
+    border-color: #a1a1aa !important;
+}
+
+.mx_RoomSearch input::placeholder {
+    color: #a1a1aa !important;
+    font-weight: 400;
+}
+
+/* ── Room list items — denser, flat hover, no purple wash on selected ─────── */
+/* Selectors target the new room list (RoomListItemView). */
+[class*="RoomListItemView"] {
+    border-radius: 6px !important;
+    min-height: 32px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    transition:
+        background-color 0.1s ease,
+        color 0.1s ease;
+}
+
+/* Hover — almost invisible warm grey */
+[class*="RoomListItemView"]:hover {
+    background-color: #f4f4f5 !important;
+}
+
+/* Selected — single full-width neutral fill. Wipe any inner accent layer so
+   we don't see a purple pill nested inside the grey wrapper. */
+[class*="RoomListItemView"][aria-selected="true"],
+[class*="RoomListItemView"][data-selected="true"],
+[class*="RoomListItemView"].mx_RoomListItemView_selected {
+    background-color: #ececef !important;
+}
+
+/* Kill the inner accent-subtle background that Compound paints under the
+   selected button — keeps our outer fill clean and edge-to-edge. */
+[class*="RoomListItemView"][aria-selected="true"] *,
+[class*="RoomListItemView"][data-selected="true"] *,
+[class*="RoomListItemView"].mx_RoomListItemView_selected * {
+    background-color: transparent !important;
+}
+
+/* Room title — 13.5px / 450 weight, tightened tracking */
+[class*="RoomListItemView"] [class*="roomName"],
+[class*="RoomListItemView"] [class*="name"],
+[class*="RoomListItemView"] [class*="title"] {
+    font-size: 13.5px !important;
+    font-weight: 450 !important;
+    letter-spacing: -0.005em;
+    color: #18181b !important;
+}
+
+/* Unread rooms — name goes near-black + 600, the only visual emphasis */
+[class*="RoomListItemView"][data-unread="true"] [class*="roomName"],
+[class*="RoomListItemView"][data-unread="true"] [class*="name"],
+[class*="RoomListItemView"][data-unread="true"] [class*="title"] {
+    color: #0a0a0a !important;
+    font-weight: 600 !important;
+}
+
+/* Last-message preview / secondary text — tiny and quiet */
+[class*="RoomListItemView"] [class*="lastMessage"],
+[class*="RoomListItemView"] [class*="subtitle"],
+[class*="RoomListItemView"] [class*="preview"] {
+    font-size: 12px !important;
+    color: #71717a !important;
+    font-weight: 400 !important;
+}
