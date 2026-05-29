@@ -854,6 +854,119 @@ body {
     color: #dc2626 !important;
 }
 
+/* ── Badges в правой панели (Зашифровано, Новые участники не видят, и т.д.) ─ */
+/* Сейчас они яркие фиолетовые/lavender — делаем тихим серым */
+.mx_RoomSummaryCard [class*="_badge_"],
+.mx_RoomSummaryCard [class*="Badge"]:not(button) {
+    background-color: #f4f4f5 !important;
+    color: #52525b !important;
+    border: none !important;
+    font-size: 12px !important;
+    font-weight: 450 !important;
+    border-radius: 6px !important;
+    padding: 4px 8px !important;
+}
+
+.mx_RoomSummaryCard [class*="_badge_"] svg,
+.mx_RoomSummaryCard [class*="Badge"]:not(button) svg {
+    color: #71717a !important;
+    width: 14px !important;
+    height: 14px !important;
+}
+
+/* «Добавить тему» — тихая ссылка вместо акцентной */
+.mx_RoomSummaryCard_topic [class*="add"],
+.mx_RoomSummaryCard button[aria-label*="тему"],
+.mx_RoomSummaryCard [class*="add_topic"] {
+    color: #71717a !important;
+    font-weight: 450 !important;
+    font-size: 13px !important;
+    background: transparent !important;
+}
+
+/* Аватар в карточке пользователя — без лишней рамки */
+.mx_RoomSummaryCard_container .mx_BaseAvatar {
+    box-shadow: none !important;
+}
+
+/* Имя в правой панели — крупное, лёгкое weight */
+.mx_RoomSummaryCard_container .mx_RoomSummaryCard_roomName,
+.mx_RoomSummaryCard_container h2,
+.mx_RoomSummaryCard_container h3 {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.015em !important;
+    color: #0a0a0a !important;
+    margin-top: 12px !important;
+}
+
+/* Пункты меню (Избранное, Пригласить, Люди, ...) — высота 44px, без подложки */
+.mx_RoomSummaryCard button,
+.mx_RoomSummaryCard [role="menuitem"] {
+    min-height: 44px !important;
+    padding: 0 20px !important;
+    gap: 14px !important;
+    background-color: transparent !important;
+    border: none !important;
+    color: #18181b !important;
+    font-size: 14px !important;
+    font-weight: 450 !important;
+    letter-spacing: -0.005em !important;
+}
+
+.mx_RoomSummaryCard button:hover,
+.mx_RoomSummaryCard [role="menuitem"]:hover {
+    background-color: #f4f4f5 !important;
+}
+
+/* Иконки пунктов — серее, чуть мельче */
+.mx_RoomSummaryCard button svg:not([class*="badge"]),
+.mx_RoomSummaryCard [role="menuitem"] svg:not([class*="badge"]) {
+    color: #71717a !important;
+    width: 18px !important;
+    height: 18px !important;
+}
+
+/* Счётчик у пункта (например "2" у Закреплённых) — тонкий серый */
+.mx_RoomSummaryCard button [class*="counter"],
+.mx_RoomSummaryCard [role="menuitem"] [class*="counter"],
+.mx_RoomSummaryCard button [class*="count"],
+.mx_RoomSummaryCard [role="menuitem"] [class*="count"] {
+    color: #71717a !important;
+    font-size: 12px !important;
+    font-weight: 450 !important;
+    background: transparent !important;
+}
+
+/* Деструктивные пункты внизу (Комната отчётов, Покинуть чат) — мягкий красный */
+.mx_RoomSummaryCard button[data-kind="critical"],
+.mx_RoomSummaryCard [data-kind="critical"] {
+    color: #dc2626 !important;
+}
+
+.mx_RoomSummaryCard button[data-kind="critical"] svg,
+.mx_RoomSummaryCard [data-kind="critical"] svg {
+    color: #dc2626 !important;
+}
+
+/* Search в шапке правой панели — выровнять под линейный стиль */
+.mx_BaseCard input[type="search"],
+.mx_BaseCard input[type="text"] {
+    background-color: #ffffff !important;
+    border: 1px solid #ededef !important;
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+}
+
+/* Поправить отступы между секциями меню — добавить «дыхание» */
+.mx_RoomSummaryCard hr,
+.mx_RoomSummaryCard [class*="separator"] {
+    margin: 8px 0 !important;
+    border: none !important;
+    border-top: 1px solid #ededef !important;
+}
+
 /* Search input inside the room summary */
 .mx_RoomSummaryCard_search input {
     background-color: #ffffff !important;
@@ -867,6 +980,395 @@ body {
     border-color: #a1a1aa !important;
     box-shadow: none !important;
     outline: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* Шаг 8 — Полировочный проход: ЛЁГКОСТЬ и ПЛАВНОСТЬ                          */
+/* ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Универсальные транзишены для воздушности ─────────────────────────────── */
+/* Каждый интерактивный элемент должен плавно реагировать. Очень быстрые
+   тайминги (80-150ms) — еле заметно глазу, но сильно поднимает «дорогость». */
+button,
+a,
+[role="button"],
+[role="menuitem"],
+[role="tab"],
+.mx_RoomListItemView,
+.mx_RoomListItemView *,
+.mx_BaseAvatar,
+.mx_RoomTile,
+.mx_RoomSearch,
+.mx_MessageComposer_wrapper {
+    transition:
+        background-color 0.12s ease,
+        color 0.12s ease,
+        border-color 0.12s ease,
+        opacity 0.12s ease,
+        transform 0.12s ease !important;
+}
+
+/* ── Облегчение всех границ — заменяем #e4e4e7 на ещё светлее #ededef ───── */
+.mx_RoomListPanel,
+.mx_LeftPanel,
+.mx_RightPanel,
+.mx_RoomHeader,
+.mx_MessageComposer,
+.mx_BaseCard_header,
+.mx_RoomSummaryCard_container {
+    border-color: #ededef !important;
+}
+
+/* Совсем убираем тени в композере — пусть будет просто чистая рамка */
+.mx_MessageComposer_wrapper {
+    box-shadow: none !important;
+    border-color: #ededef !important;
+}
+
+/* ── Снижаем визуальный вес SpacePanel-бейджей ────────────────────────────── */
+/* Notification-бейджи делаем тоньше, мельче, спокойнее */
+.mx_SpacePanel .mx_NotificationBadge,
+.mx_SpacePanel [class*="NotificationBadge"],
+.mx_SpaceButton .mx_NotificationBadge {
+    background-color: #5e6ad2 !important;
+    color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    padding: 0 4px !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+}
+
+/* SpacePanel — БЕЛЫЙ как в референсе, тёмные иконки на нём */
+.mx_SpacePanel {
+    background-color: #ffffff !important;
+    border-right: none !important;
+}
+
+.mx_SpacePanel,
+.mx_SpacePanel *,
+.mx_SpacePanel svg {
+    color: #18181b !important;
+    fill: currentColor;
+}
+
+.mx_SpacePanel .mx_SpacePanel_toggleCollapse {
+    color: #71717a !important;
+}
+
+.mx_SpaceButton:hover,
+.mx_SpaceButton_selected {
+    background-color: #f4f4f5 !important;
+    border-radius: 8px;
+}
+
+/* UserMenu (К-аватар вверху) — тоже белый, без рамки */
+.mx_UserMenu {
+    background-color: #ffffff !important;
+    border-top: none !important;
+    color: #18181b !important;
+}
+
+.mx_UserMenu *,
+.mx_UserMenu svg {
+    color: #18181b !important;
+    fill: currentColor !important;
+}
+
+/* ── Сайдбар-заголовки тоньше ─────────────────────────────────────────────── */
+/* «Мои чаты» — меньше и легче (650→550) */
+.mx_RoomListHeaderView h1,
+.mx_LeftPanel h1,
+[class*="RoomListHeaderView"] h1 {
+    font-size: 14px !important;
+    font-weight: 550 !important;
+    letter-spacing: -0.008em !important;
+    color: #18181b !important;
+}
+
+/* ── Облегчаем шрифты комнат в списке (450→400, 13.5→13) ─────────────────── */
+[class*="RoomListItemView"] [class*="roomName"],
+[class*="RoomListItemView"] [class*="name"],
+[class*="RoomListItemView"] [class*="title"] {
+    font-size: 13px !important;
+    font-weight: 450 !important;
+    color: #27272a !important;
+}
+
+/* ── Header чата чуть тоньше ──────────────────────────────────────────────── */
+/* Имя комнаты — 15/600 вместо 16/650 */
+.mx_RoomHeader_nametext,
+.mx_RoomHeader_heading,
+.mx_RoomHeader h1 {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.012em !important;
+}
+
+/* Высота header — оставляем 64px (это «дорогое», не «тяжёлое»),
+   но padding делаем щедрее */
+.mx_RoomHeader {
+    padding: 0 24px !important;
+}
+
+/* ── Иконки в header-чата ещё тише ────────────────────────────────────────── */
+.mx_RoomHeader_button,
+.mx_RoomHeader [role="button"] svg,
+.mx_RoomHeader button svg {
+    color: #71717a !important;
+    width: 18px !important;
+    height: 18px !important;
+}
+
+/* ── Облегчение поля поиска — невидимая рамка пока не в фокусе ───────────── */
+.mx_RoomSearch {
+    background-color: #ffffff !important;
+    border: 1px solid #ededef !important;
+    box-shadow: none !important;
+}
+
+/* ── Уменьшаем визуальный шум action-bar при hover ────────────────────────── */
+.mx_MessageActionBar {
+    background-color: #ffffff !important;
+    border: 1px solid #ededef !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ── Pinned-баннер сообщения — тише, без жирного фона ─────────────────────── */
+.mx_PinnedMessageBanner {
+    background-color: #fafafa !important;
+    border-bottom: 1px solid #ededef !important;
+    box-shadow: none !important;
+}
+
+.mx_PinnedMessageBanner [class*="title"],
+.mx_PinnedMessageBanner_title {
+    font-weight: 550 !important;
+    color: #27272a !important;
+}
+
+/* ── Day-separator ещё тише ───────────────────────────────────────────────── */
+.mx_TimelineSeparator {
+    color: #a1a1aa !important;
+    font-size: 11px !important;
+    font-weight: 450 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+}
+
+.mx_TimelineSeparator hr {
+    border-color: #ededef !important;
+}
+
+/* ── Bubble «Шифрование включено» / системные карточки — лёгкие ───────────── */
+[class*="EncryptionEvent"],
+[class*="encryption"],
+.mx_EventTile_info {
+    background-color: transparent !important;
+}
+
+/* ── Аватары без рамок ───────────────────────────────────────────────────── */
+.mx_BaseAvatar,
+[class*="Avatar"] {
+    box-shadow: none !important;
+}
+
+/* ── Скроллбары ещё тоньше ───────────────────────────────────────────────── */
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+    background-color: #e4e4e7;
+}
+
+/* ── Все кнопки — мягче радиус ───────────────────────────────────────────── */
+button,
+[role="button"] {
+    border-radius: 6px;
+}
+
+/* ── Финальный штрих: smooth-scroll внутри панелей (НЕ timeline!) ─────────── */
+.mx_BaseCard,
+.mx_RightPanel,
+.mx_RoomSummaryCard {
+    scroll-behavior: smooth;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* Шаг 8b — Видимые сдвиги: убираем тяжесть структурно                        */
+/* ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Полностью УБИРАЕМ границы между панелями — оставляем только цвет ────── */
+/* Сейчас сайдбар отделён 1px-границей от чата. Уберём её — пусть отделяет
+   только разница в фоне (#fafafa сайдбар vs #ffffff чат). Это самое сильное
+   ощущение «лёгкости» — нет линий, есть плоскости. */
+.mx_RoomListPanel,
+.mx_LeftPanel {
+    border-right: none !important;
+}
+
+.mx_RightPanel {
+    border-left: none !important;
+}
+
+/* Header чата БЕЗ нижней границы — отделяется только белым фоном */
+.mx_RoomHeader {
+    border-bottom: none !important;
+}
+
+/* Композер БЕЗ верхней границы */
+.mx_MessageComposer {
+    border-top: none !important;
+}
+
+/* ── Уменьшаем визуальный вес sidebar background tint ─────────────────────── */
+/* Делаем сайдбар БЕЛЕЕ, отличие от чата только в волоске — это premium-feel */
+.mx_LeftPanel_newRoomList,
+.mx_RoomListPanel,
+.mx_LeftPanel_roomListWrapper {
+    background-color: #fbfbfb !important;
+}
+
+.mx_RightPanel {
+    background-color: #fbfbfb !important;
+}
+
+/* ── Day-separator БЕЗ горизонтальных линий — просто текст ────────────────── */
+.mx_TimelineSeparator hr {
+    display: none !important;
+}
+
+.mx_TimelineSeparator {
+    text-align: center;
+    padding: 20px 0 !important;
+}
+
+.mx_TimelineSeparator [class*="label"],
+.mx_TimelineSeparator span {
+    background-color: transparent !important;
+    color: #a1a1aa !important;
+    font-size: 12px !important;
+    font-weight: 450 !important;
+}
+
+/* ── Воздух между сообщениями разных авторов ─────────────────────────────── */
+/* Первое сообщение в группе получает большой отступ сверху от предыдущей
+   группы. Создаёт читаемые «абзацы» в ленте. */
+.mx_EventTile:not(.mx_EventTile_continuation) {
+    margin-top: 16px !important;
+}
+
+.mx_EventTile.mx_EventTile_continuation {
+    margin-top: 0 !important;
+}
+
+/* ── Имена авторов чуть тоньше: 600 → 550 ─────────────────────────────────── */
+.mx_DisambiguatedProfile_displayName {
+    font-weight: 550 !important;
+    color: #18181b !important;
+}
+
+/* ── Тело сообщения чуть больше для читаемости ────────────────────────────── */
+.mx_EventTile_body,
+.mx_MTextBody {
+    font-size: 14.5px !important;
+    line-height: 1.6 !important;
+    color: #18181b !important;
+}
+
+/* ── Pinned-баннер становится «листочком», не блоком ──────────────────────── */
+.mx_PinnedMessageBanner {
+    background-color: transparent !important;
+    border-bottom: none !important;
+    padding: 8px 24px !important;
+    font-size: 13px !important;
+}
+
+.mx_PinnedMessageBanner_title {
+    font-size: 13px !important;
+    color: #71717a !important;
+    font-weight: 450 !important;
+}
+
+/* ── Композер — карточка ещё мягче, поднимаем её отдельной плоскостью ────── */
+.mx_MessageComposer_wrapper {
+    border: 1px solid #ededef !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    border-radius: 14px !important;
+    padding: 12px 14px !important;
+}
+
+/* ── Фильтр-чипы тоньше: weight 500 → 450 ────────────────────────────────── */
+[data-testid="primary-filters"] button {
+    font-weight: 450 !important;
+    letter-spacing: -0.005em !important;
+}
+
+/* ── Search в сайдбаре — невидимая рамка, ещё легче ──────────────────────── */
+.mx_RoomSearch {
+    border-color: #ededef !important;
+    background-color: #ffffff !important;
+}
+
+/* ── Точечные правки под референс ──────────────────────────────────────── */
+
+/* Кнопка коллапса SpacePanel — оставляем как есть, не прячем */
+
+/* 2. Спрятать chevron-кнопку «развернуть фильтры» (стрелка ▼ после чипов) */
+[data-testid="primary-filters"] + button,
+[data-testid="primary-filters"] ~ button[aria-expanded],
+[data-testid="primary-filters"] [class*="expand"],
+[data-testid="primary-filters"] [class*="Expand"],
+.mx_RoomListPanel button[aria-label*="фильтр"][aria-expanded] {
+    display: none !important;
+}
+
+/* 3. На нижних landmark-кнопках («Обсуждения», «Настройки») оставить только
+   иконки, скрыть текстовые лейблы — как в референсе */
+.mx_LegacyRoomHeader_legacyPicker,
+.mx_UserMenu_userOptions,
+.mx_LeftPanel_userMenu [class*="label"],
+.mx_LeftPanel button[aria-label*="Обсуждения"] span:not([class*="icon"]),
+.mx_LeftPanel button[aria-label*="Настройки"] span:not([class*="icon"]),
+.mx_LeftPanel a[aria-label*="Обсуждения"] span:not([class*="icon"]),
+.mx_LeftPanel a[aria-label*="Настройки"] span:not([class*="icon"]) {
+    display: none !important;
+}
+
+/* 4. Selected-комната — БЕЗ серого фона, только небольшое визуальное
+   указание через жирность имени (как в референсе) */
+[class*="RoomListItemView"][aria-selected="true"],
+[class*="RoomListItemView"][data-selected="true"],
+[class*="RoomListItemView"].mx_RoomListItemView_selected {
+    background-color: transparent !important;
+}
+
+/* Жирнее имя у выбранной комнаты — это и есть «выделение» */
+[class*="RoomListItemView"][aria-selected="true"] [class*="roomName"],
+[class*="RoomListItemView"][aria-selected="true"] [class*="name"],
+[class*="RoomListItemView"][aria-selected="true"] [class*="title"],
+[class*="RoomListItemView"][data-selected="true"] [class*="roomName"],
+[class*="RoomListItemView"][data-selected="true"] [class*="name"],
+[class*="RoomListItemView"][data-selected="true"] [class*="title"] {
+    font-weight: 600 !important;
+    color: #0a0a0a !important;
+}
+
+/* 5. Бейдж непрочитанных у комнаты — в виде точки справа, а не цифры */
+[class*="RoomListItemView"] [class*="unreadCounter"],
+[class*="RoomListItemView"] [class*="NotificationBadge"] {
+    font-size: 10px !important;
+    min-width: 14px !important;
+    height: 14px !important;
+    padding: 0 4px !important;
+    border-radius: 7px !important;
+    background-color: #71717a !important;
+    color: #ffffff !important;
 }
 
 /* Inner editor — strip any extra border/bg */
