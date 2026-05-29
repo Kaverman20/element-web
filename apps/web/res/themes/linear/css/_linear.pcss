@@ -16,6 +16,10 @@
  */
 
 /* ── Compound design tokens ──────────────────────────────────────────────── */
+/* Compound defines tokens under `.cpd-theme-light.cpd-theme-light` (doubled
+   class for extra specificity). We must match or beat that selector — plain
+   `:root` loses the cascade. */
+.cpd-theme-light.cpd-theme-light,
 :root {
     --cpd-color-bg-canvas-default: #ffffff;
     --cpd-color-bg-subtle-secondary: #fafafa;
@@ -24,12 +28,38 @@
     --cpd-color-text-primary: #0a0a0a;
     --cpd-color-text-secondary: #71717a;
 
+    --cpd-color-border-interactive-primary: #e4e4e7;
+
+    /* ── Accent shift: Element's green scale → Linear purple ──
+       Element binds $accent-N to --cpd-color-green-N, so overriding the
+       whole green scale here repaints every accent surface in one shot
+       (send button, selected room, bubbles, pills, verified indicators). */
+    --cpd-color-green-100: #f3f4fb;
+    --cpd-color-green-200: #e8eaf7;
+    --cpd-color-green-300: #c8ceef;
+    --cpd-color-green-400: #a4ade3;
+    --cpd-color-green-500: #828dd7;
+    --cpd-color-green-600: #5e6ad2;
+    --cpd-color-green-700: #4f5bc2;
+    --cpd-color-green-800: #4148a8;
+    --cpd-color-green-900: #353b8c;
+    --cpd-color-green-1000: #2a2e70;
+    --cpd-color-green-1100: #232752;
+    --cpd-color-green-1200: #1b1e40;
+    --cpd-color-green-1300: #14172e;
+    --cpd-color-green-1400: #0e101f;
+
+    /* Compound accent tokens — point at the new purple */
     --cpd-color-text-action-accent: #5e6ad2;
     --cpd-color-icon-accent-primary: #5e6ad2;
+    --cpd-color-icon-accent-tertiary: #5e6ad2;
     --cpd-color-bg-accent-rest: #5e6ad2;
     --cpd-color-bg-accent-hovered: #4f5bc2;
+    --cpd-color-bg-accent-pressed: #4148a8;
     --cpd-color-bg-accent-subtle: rgba(94, 106, 210, 0.1);
-    --cpd-color-border-interactive-primary: #e4e4e7;
+    --cpd-color-bg-action-primary-rest: #5e6ad2;
+    --cpd-color-bg-action-primary-hovered: #4f5bc2;
+    --cpd-color-bg-action-primary-pressed: #4148a8;
 }
 
 /* ── Typography ──────────────────────────────────────────────────────────── */
