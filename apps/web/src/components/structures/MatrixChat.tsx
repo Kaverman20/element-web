@@ -142,6 +142,7 @@ import { isOnlyAdmin } from "../../utils/membership";
 import { ModuleApi } from "../../modules/Api.ts";
 import { type IScreen } from "../../vector/routing.ts";
 import { type URLParams } from "../../vector/url_utils.ts";
+import { startReadReceiptTimeTracking } from "../../utils/ReadReceiptTimeTracker.ts";
 
 // legacy export
 export { default as Views } from "../../Views";
@@ -1782,6 +1783,9 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
      */
     private async onClientStarted(): Promise<void> {
         const cli = MatrixClientPeg.safeGet();
+
+        // Linear/TG-style per-message read time tracking.
+        startReadReceiptTimeTracking(cli);
 
         const shouldForceVerification = await this.shouldForceVerification();
 

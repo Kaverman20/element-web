@@ -75,6 +75,7 @@ import { type ShowThreadPayload } from "../../../dispatcher/payloads/ShowThreadP
 import { CardContext } from "../right_panel/context";
 import PinningUtils from "../../../utils/PinningUtils";
 import PosthogTrackers from "../../../PosthogTrackers.ts";
+import { getReadTime } from "../../../utils/ReadReceiptTimeTracker.ts";
 
 interface IReplyInThreadButton {
     mxEvent: MatrixEvent;
@@ -447,6 +448,58 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
             );
         }
 
+        // Telegram-style: «Прочитано <время>» в контекст-меню для своих
+        // сообщений. Per-event read time идёт из нашего трекера
+        // (ReadReceiptTimeTracker), который слушает receipt-события и
+        // back-fill'ит timestamp каждого сообщения когда получатель его
+        // прочитал. Fallback на текущий receipt если трекер ещё не записал.
+        let readReceiptButton: JSX.Element | undefined;
+        const eventId = mxEvent.getId();
+        const roomId = mxEvent.getRoomId();
+        if (mxEvent.getSender() === me && eventId && roomId) {
+            let readTs: number | undefined = getReadTime(roomId, eventId);
+
+            // Fallback: receipt is exactly on this event (latest read)
+            if (!readTs) {
+                const room = cli.getRoom(roomId);
+                const myEventTs = mxEvent.getTs();
+                let isReadByOther = false;
+                if (room) {
+                    for (const member of room.getMembers()) {
+                        if (member.userId === me) continue;
+                        const receipt = room.getReadReceiptForUserId(member.userId);
+                        if (!receipt?.data?.ts) continue;
+                        const receiptEvent = room.findEventById(receipt.eventId);
+                        const readUpToTs = receiptEvent?.getTs() ?? receipt.data.ts;
+                        if (readUpToTs >= myEventTs) {
+                            isReadByOther = true;
+                            if (!readTs || receipt.data.ts > readTs) {
+                                readTs = receipt.data.ts;
+                            }
+                        }
+                    }
+                }
+                if (!isReadByOther) readTs = undefined;
+            }
+
+            if (readTs) {
+                const dateStr = new Date(readTs).toLocaleString(undefined, {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                });
+                readReceiptButton = (
+                    <IconizedContextMenuOption
+                        icon={<CheckIcon />}
+                        label={`Прочитано ${dateStr}`}
+                        onClick={null}
+                    />
+                );
+            }
+        }
+
         let openInMapSiteButton: JSX.Element | undefined;
         const shareableLocationEvent = getShareableLocationEvent(mxEvent, cli);
         if (shareableLocationEvent) {
@@ -743,6 +796,11 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
             redactItemList = <IconizedContextMenuOptionList red>{redactButton}</IconizedContextMenuOptionList>;
         }
 
+        let readReceiptItemList: JSX.Element | undefined;
+        if (readReceiptButton) {
+            readReceiptItemList = <IconizedContextMenuOptionList>{readReceiptButton}</IconizedContextMenuOptionList>;
+        }
+
         let reactionPicker: JSX.Element | undefined;
         if (this.state.reactionPickerDisplayed) {
             const buttonRect = (this.reactButtonRef.current as HTMLElement)?.getBoundingClientRect();
@@ -764,6 +822,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                     {nativeItemsList}
                     {quickItemsList}
                     {commonItemsList}
+                    {readReceiptItemList}
                     {redactItemList}
                 </IconizedContextMenu>
                 {reactionPicker}

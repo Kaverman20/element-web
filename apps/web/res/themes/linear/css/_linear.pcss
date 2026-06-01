@@ -1112,6 +1112,130 @@ body {
     background-color: #fbfbfb !important;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* Шаг 10 — Telegram-стиль read-receipts                                      */
+/*                                                                            */
+/* Логика:                                                                    */
+/*   - Своё сообщение, отправлено, ещё не прочитано → ✓ (одна, серая)        */
+/*   - Своё сообщение, прочитано получателем        → ✓✓ (две, синие TG)    */
+/*   - Входящее сообщение                            → ничего (галочек нет)  */
+/* ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Галочки скрыты на:                                                  ── */
+/*   - ВХОДЯЩИХ сообщениях (мы и так знаем что прочитали их)                 */
+/*   - SYSTEM-событиях (пины, изменения настроек, join/leave) — как в TG    */
+.mx_EventTile[data-self="false"] .mx_ReadReceiptGroup,
+.mx_EventTile[data-self="false"] .mx_SentReceipt,
+.mx_EventTile[data-self="false"] [class*="SentReceipt"],
+.mx_EventTile_info .mx_ReadReceiptGroup,
+.mx_EventTile_info .mx_SentReceipt,
+.mx_EventTile_info [class*="SentReceipt"] {
+    display: none !important;
+}
+
+/* Также не рисуем ::after на system-событиях */
+.mx_EventTile_info .mx_ReadReceiptGroup::after {
+    display: none !important;
+}
+
+/* ── Отключаем тултип «Просмотрел N человек» на hover галочек ────────────── */
+/* Информация о прочтении уйдёт в context-меню — как в Telegram */
+.mx_ReadReceiptGroup,
+.mx_SentReceipt,
+[class*="SentReceipt"] {
+    pointer-events: none !important;
+}
+
+/* ── 2. Скрываем дефолтные аватарки прочитавших, оставляем только контейнер ── */
+.mx_ReadReceiptGroup .mx_BaseAvatar,
+.mx_ReadReceiptGroup_container > * {
+    display: none !important;
+}
+
+.mx_ReadReceiptGroup {
+    width: auto !important;
+    height: auto !important;
+    min-width: 16px;
+    min-height: 14px;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    position: relative;
+}
+
+/* ── 3. ПРОЧИТАНО (своё сообщение) → ✓✓ синяя Telegram (#4FA3E3) ─────────── */
+/* Двойную галочку рисуем ТОЛЬКО когда внутри ReadReceiptGroup реально есть
+   аватарка прочитавшего (значит получатель открыл чат). Если контейнер
+   пустой — Element покажет SentReceipt отдельно (наша серая ✓). */
+.mx_EventTile[data-self="true"] .mx_ReadReceiptGroup:has(.mx_BaseAvatar)::after {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 12px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12' fill='none' stroke='%234FA3E3' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polyline points='1 6 4 9 9 3'/><polyline points='7 6 10 9 15 3'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+/* Пустой ReadReceiptGroup (никто не прочитал) — показываем серую одиночную ✓
+   точно так же как SentReceipt, чтобы не было «дырки» в UI */
+.mx_EventTile[data-self="true"] .mx_ReadReceiptGroup:not(:has(.mx_BaseAvatar))::after {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 12px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12' fill='none' stroke='%23a1a1aa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polyline points='2 6 6 10 14 2'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+/* ── 4. ОТПРАВЛЕНО (своё сообщение, ещё не прочитано) → ✓ серая ──────────── */
+.mx_EventTile[data-self="true"] .mx_SentReceipt,
+.mx_EventTile[data-self="true"] [class*="SentReceipt"] {
+    width: 16px !important;
+    height: 12px !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12' fill='none' stroke='%23a1a1aa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polyline points='2 6 6 10 14 2'/></svg>") !important;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.mx_SentReceipt svg,
+.mx_SentReceipt img,
+[class*="SentReceipt"] svg,
+[class*="SentReceipt"] img {
+    display: none !important;
+}
+
+/* ── 5. ПРОПАГАЦИЯ «прочитано» на ВСЕ предыдущие own-сообщения ──────────── */
+/* Matrix shows the read-avatar только на последнем прочитанном событии —
+   и это может быть ЛЮБОЕ событие (текст, system-event, pin, reaction).
+   Смотрим на любого следующего сиблинга с read-avatar — если он есть,
+   значит все предыдущие own-сообщения прочитаны. */
+
+/* SentReceipt предыдущего сообщения → синяя ✓✓ (Telegram blue) */
+.mx_EventTile[data-self="true"]:has(
+    ~ .mx_EventTile .mx_ReadReceiptGroup .mx_BaseAvatar
+) [class*="SentReceipt"],
+.mx_EventTile[data-self="true"]:has(
+    ~ .mx_EventTile .mx_ReadReceiptGroup .mx_BaseAvatar
+) .mx_SentReceipt {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12' fill='none' stroke='%234FA3E3' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polyline points='1 6 4 9 9 3'/><polyline points='7 6 10 9 15 3'/></svg>") !important;
+}
+
+/* Пустой ReadReceiptGroup предыдущего сообщения → тоже синяя ✓✓ */
+.mx_EventTile[data-self="true"]:has(
+    ~ .mx_EventTile .mx_ReadReceiptGroup .mx_BaseAvatar
+)
+    .mx_ReadReceiptGroup:not(:has(.mx_BaseAvatar))::after {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12' fill='none' stroke='%234FA3E3' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polyline points='1 6 4 9 9 3'/><polyline points='7 6 10 9 15 3'/></svg>") !important;
+}
+
 
 /* ══════════════════════════════════════════════════════════════════════════ */
 /* Шаг 8 — Полировочный проход: ЛЁГКОСТЬ и ПЛАВНОСТЬ                          */
