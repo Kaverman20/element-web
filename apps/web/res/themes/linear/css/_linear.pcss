@@ -152,16 +152,38 @@ body,
     font-weight: 400;
 }
 
-/* ── Room list items — denser, flat hover, no purple wash on selected ─────── */
-/* Selectors target the new room list (RoomListItemView). */
+/* ── Room list items — TG-стиль: крупные аватары + видимый разделитель ──── */
 [class*="RoomListItemView"] {
-    border-radius: 6px !important;
-    min-height: 32px !important;
-    padding-top: 4px !important;
-    padding-bottom: 4px !important;
+    position: relative !important;
+    border-radius: 0 !important;
+    min-height: 68px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
     transition:
         background-color 0.1s ease,
         color 0.1s ease;
+}
+
+/* Тонкий разделитель — рисуем на ОБЁРТКЕ виртуализированного списка
+   ([data-item-index]), потому что button внутри имеет свой layout и
+   box-shadow на ней не видно между строками. */
+[data-item-index] {
+    box-shadow: inset 0 -1px 0 #e4e4e7;
+}
+
+/* Крупная аватарка как в TG */
+[class*="RoomListItemView"] .mx_BaseAvatar,
+[class*="RoomListItemView"] [class*="avatar"] img,
+[class*="RoomListItemView"] [class*="Avatar"] {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    border-radius: 50% !important;
+    font-size: 18px !important;
+    line-height: 48px !important;
 }
 
 /* Hover — almost invisible warm grey */

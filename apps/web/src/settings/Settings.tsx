@@ -1238,7 +1238,9 @@ export const SETTINGS: Settings = {
     },
     "RoomList.showMessagePreview": {
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS_WITH_CONFIG,
-        default: false,
+        // Linear: TG-style — превью последнего сообщения в room list включено
+        // по умолчанию. Пользователь может выключить через ⋯-меню в шапке.
+        default: true,
         displayName: _td("settings|show_message_previews"),
     },
     "RightPanel.phasesGlobal": {
