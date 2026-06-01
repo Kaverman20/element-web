@@ -1138,6 +1138,19 @@ body {
     display: none !important;
 }
 
+/* ── Presence subtitle в шапке DM-чата («в сети» / «был в HH:MM») ────────── */
+.mx_RoomHeader_presenceSubtitle {
+    font-size: 12px !important;
+    color: #71717a !important;
+    font-weight: 400 !important;
+    line-height: 1.3 !important;
+    margin-top: 2px;
+}
+
+.mx_RoomHeader_presenceSubtitle[data-presence="online"] {
+    color: #22c55e !important;
+}
+
 /* ── Отключаем тултип «Просмотрел N человек» на hover галочек ────────────── */
 /* Информация о прочтении уйдёт в context-меню — как в Telegram */
 .mx_ReadReceiptGroup,

@@ -47,7 +47,7 @@ import { isVideoRoom as calcIsVideoRoom } from "../../../../utils/video-rooms.ts
 import { notificationLevelToIndicator } from "../../../../utils/notifications.ts";
 import { CallGuestLinkButton } from "./CallGuestLinkButton.tsx";
 import { type ButtonEvent } from "../../elements/AccessibleButton.tsx";
-import WithPresenceIndicator, { useDmMember } from "../../avatars/WithPresenceIndicator.tsx";
+import WithPresenceIndicator, { Presence, useDmMember, usePresence } from "../../avatars/WithPresenceIndicator.tsx";
 import { type IOOBData } from "../../../../stores/ThreepidInviteStore.ts";
 import { MainSplitContentType } from "../../../structures/RoomView.tsx";
 import defaultDispatcher from "../../../../dispatcher/dispatcher.ts";
@@ -448,9 +448,65 @@ export default function RoomHeader({
     const historyVisibility = useRoomState(room, (state) => state.getHistoryVisibility());
     const dmMember = useDmMember(room);
     const isDirectMessage = !!dmMember;
+    const presence = usePresence(room, dmMember);
     const isRoomEncrypted = useIsEncrypted(client, room);
     const e2eStatus = useEncryptionStatus(client, room);
     const askToJoinEnabled = useFeatureEnabled("feature_ask_to_join");
+
+    // Telegram-style presence subtitle: «в сети» / «был(а) в HH:MM».
+    // Если presence отключён на сервере (matrix.org часто это делает) —
+    // fallback на время последнего сообщения этого пользователя в чате.
+    let presenceSubtitle: string | undefined;
+    if (isDirectMessage) {
+        const formatLastSeen = (ts: number): string => {
+            const date = new Date(ts);
+            const now = new Date();
+            const sameDay = date.toDateString() === now.toDateString();
+            if (sameDay) {
+                const hh = String(date.getHours()).padStart(2, "0");
+                const mm = String(date.getMinutes()).padStart(2, "0");
+                return `был(а) в ${hh}:${mm}`;
+            }
+            return `был(а) ${date.toLocaleDateString(undefined, { day: "numeric", month: "long" })}`;
+        };
+
+        if (presence === Presence.Online) {
+            presenceSubtitle = "в сети";
+        } else if (presence === Presence.Busy) {
+            presenceSubtitle = "не беспокоить";
+        } else if (presence === Presence.Away) {
+            presenceSubtitle = "отошёл(ла)";
+        } else {
+            // Offline или presence === null (сервер не отдаёт presence)
+            const user = dmMember?.user;
+            const lastActiveTs =
+                user && user.lastPresenceTs && user.lastActiveAgo !== undefined
+                    ? user.lastPresenceTs - user.lastActiveAgo
+                    : undefined;
+            if (lastActiveTs) {
+                presenceSubtitle = formatLastSeen(lastActiveTs);
+            } else {
+                // Fallback: время последнего сообщения dmMember в этом чате.
+                // Если он писал меньше минуты назад — считаем «в сети»
+                // (heuristic т.к. matrix.org отключил серверный presence).
+                const events = room.getLiveTimeline().getEvents();
+                let lastMsgTs: number | undefined;
+                for (let i = events.length - 1; i >= 0; i--) {
+                    if (events[i].getSender() === dmMember?.userId) {
+                        lastMsgTs = events[i].getTs();
+                        break;
+                    }
+                }
+                if (lastMsgTs && Date.now() - lastMsgTs < 60_000) {
+                    presenceSubtitle = "в сети";
+                } else if (lastMsgTs) {
+                    presenceSubtitle = formatLastSeen(lastMsgTs);
+                } else {
+                    presenceSubtitle = "не в сети";
+                }
+            }
+        }
+    }
     const onAvatarClick = (): void => {
         defaultDispatcher.dispatch({
             action: "open_room_settings",
@@ -533,6 +589,17 @@ export default function RoomHeader({
 
                                 {isRoomEncrypted && historyVisibilityIcon(historyVisibility)}
                             </Text>
+                            {presenceSubtitle && (
+                                <Text
+                                    as="div"
+                                    size="sm"
+                                    weight="regular"
+                                    className="mx_RoomHeader_presenceSubtitle"
+                                    data-presence={presence?.toLowerCase()}
+                                >
+                                    {presenceSubtitle}
+                                </Text>
+                            )}
                         </Box>
                     </button>
                     {/* If the room is local-only then we don't want to show any additional buttons, as it won't work */}
