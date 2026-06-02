@@ -571,6 +571,16 @@ a:focus-visible,
     transition: box-shadow 0.1s ease;
 }
 
+/* Сообщения и их части — без focus-ring (выглядит лишним на каждом клике) */
+.mx_EventTile:focus,
+.mx_EventTile:focus-visible,
+.mx_EventTile *:focus,
+.mx_EventTile *:focus-visible,
+.mx_EventTile :focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 /* ── Buttons — smooth micro-press on click ───────────────────────────────── */
 button:not(:disabled):active,
 [role="button"]:not([aria-disabled="true"]):active {
@@ -1471,17 +1481,58 @@ a,
     color: #27272a !important;
 }
 
-/* ── Day-separator ещё тише ───────────────────────────────────────────────── */
+/* ── Day-separator: TG-стиль sticky pill ─────────────────────────────────── */
+/* Sticky применяем к <li>-обёртке, иначе sticky не работает (separator
+   заперт внутри своего <li>-родителя, не может «прилипнуть» к scroll-container). */
+.mx_RoomView li:has(> .mx_TimelineSeparator) {
+    position: sticky !important;
+    top: 8px !important;
+    z-index: 2;
+    pointer-events: none;
+    background: transparent !important;
+    list-style: none;
+}
+
 .mx_TimelineSeparator {
-    color: #a1a1aa !important;
-    font-size: 11px !important;
-    font-weight: 450 !important;
+    display: flex !important;
+    justify-content: center;
+    pointer-events: none;
+    margin: 8px 0 !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
 }
 
+/* Убираем синюю focus-обводку на scroll-контейнере таймлайна —
+   она появляется когда панель получает focus (Tab, скриншот) и портит вид. */
+.mx_ScrollPanel,
+.mx_ScrollPanel:focus,
+.mx_ScrollPanel:focus-visible,
+.mx_RoomView_messageListWrapper,
+.mx_RoomView_messageListWrapper:focus,
+.mx_RoomView_messageListWrapper:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Label-pill — белая с тонкой тенью, по центру */
+.mx_TimelineSeparator [class*="label"],
+.mx_TimelineSeparator > span,
+.mx_TimelineSeparator > div {
+    background-color: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #71717a !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    padding: 5px 12px !important;
+    border-radius: 999px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 1px #ededef;
+    pointer-events: auto;
+}
+
+/* Скрываем дефолтные hr-линии — у нас pill самодостаточный */
 .mx_TimelineSeparator hr {
-    border-color: #ededef !important;
+    display: none !important;
 }
 
 /* ── Bubble «Шифрование включено» / системные карточки — лёгкие ───────────── */

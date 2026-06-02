@@ -15,7 +15,7 @@ import React from "react";
 import { Direction, ConnectionError, HTTPError, MatrixError } from "matrix-js-sdk/src/matrix";
 import { logger } from "matrix-js-sdk/src/logger";
 
-import { formatFullDateNoDay, formatFullDateNoTime, getDaysArray } from "../../../DateUtils";
+import { formatFullDateNoDay, formatFullDateNoTime } from "../../../DateUtils";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import dispatcher from "../../../dispatcher/dispatcher";
 import { Action } from "../../../dispatcher/actions";
@@ -122,15 +122,14 @@ export class DateSeparatorViewModel
 
             const today = new Date();
             const yesterday = new Date();
-            const days = getDaysArray("long");
             yesterday.setDate(today.getDate() - 1);
 
+            // Linear/TG-style: «сегодня» / «вчера» / иначе полная дата
+            // (не показываем «Пятница / Четверг» — конкретная дата информативнее).
             if (date.toDateString() === today.toDateString()) {
                 return this.relativeTimeFormat.format(0, "day");
             } else if (date.toDateString() === yesterday.toDateString()) {
                 return this.relativeTimeFormat.format(-1, "day");
-            } else if (today.getTime() - date.getTime() < 6 * 24 * 60 * 60 * 1000) {
-                return days[date.getDay()];
             } else {
                 return formatFullDateNoTime(date);
             }
