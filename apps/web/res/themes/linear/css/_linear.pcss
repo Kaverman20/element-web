@@ -2205,13 +2205,21 @@ button,
 /* с backdrop-filter: blur — frosted glass эффект как в macOS / iOS.           */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
+/* Blur только для крупных модалок (Dialog), НЕ для контекст-меню */
 .mx_Dialog_background,
-.mx_Dialog_background.mx_Dialog_background_overlay,
-.mx_ContextualMenu_background {
+.mx_Dialog_background.mx_Dialog_background_overlay {
     background-color: rgba(255, 255, 255, 0.18) !important;
     backdrop-filter: blur(4px) saturate(130%) !important;
     -webkit-backdrop-filter: blur(4px) saturate(130%) !important;
     opacity: 1 !important;
+}
+
+/* Контекст-меню — прозрачный backdrop, без блюра (чтобы не размывало
+   таргет-сообщение под меню реакций/ответа/закрепить и т.п.) */
+.mx_ContextualMenu_background {
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -2240,6 +2248,71 @@ button,
 .mx_RoomListHeaderView,
 [class*="RoomListHeader"] {
     border-bottom: 1px solid #ededef !important;
+}
+
+/* ─── Закреплённые сообщения: компактный двухстрочный блок ── */
+.mx_PinnedMessageBanner {
+    padding: 8px 16px !important;
+    height: auto !important;
+    min-height: 44px !important;
+    background: #fafafa !important;
+    border-bottom: 1px solid #ededef !important;
+    box-shadow: none !important;
+}
+
+/* Preview-текст компактный: одна строка с ellipsis */
+.mx_PinnedMessageBanner_message,
+.mx_PinnedMessageBanner_redactedMessage {
+    font-size: 13px !important;
+    line-height: 18px !important;
+    color: #71717a !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 100% !important;
+}
+
+/* Title-счётчик — мельче, не доминирует */
+.mx_PinnedMessageBanner_title {
+    font-size: 11px !important;
+    line-height: 14px !important;
+    color: #a1a1aa !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+}
+
+/* Заголовок-счётчик — компактная строка */
+.mx_PinnedMessageBanner_title,
+.mx_PinnedMessageBanner_title_counter {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: #52525b !important;
+    line-height: 20px !important;
+    margin: 0 !important;
+}
+
+/* Индикаторы (палочки слева) компактнее */
+.mx_PinnedMessageBanner_Indicators {
+    height: 20px !important;
+}
+
+/* Пин-иконка меньше */
+.mx_PinnedMessageBanner [class*="pinIcon"] svg,
+.mx_PinnedMessageBanner svg {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+/* «Посмотреть все» — компактнее */
+.mx_PinnedMessageBanner_actions,
+.mx_PinnedMessageBanner button {
+    font-size: 12px !important;
+}
+
+/* Скрываем system-event «закрепил(а) сообщение» — дублирует banner */
+.mx_EventTile_info[data-event-type="m.room.pinned_events"],
+.mx_GenericEventListSummary:has([data-event-type="m.room.pinned_events"]) {
+    display: none !important;
 }
 
 /* Подложка модалок не перекрывает сайдбар.
