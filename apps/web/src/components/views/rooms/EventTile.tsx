@@ -27,6 +27,7 @@ import {
     type MatrixEvent,
     MatrixEventEvent,
     type Relations,
+    RelationType,
     type Room,
     RelationsEvent,
     RoomEvent,
@@ -834,6 +835,49 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
         });
     };
 
+    /**
+     * Telegram-style quick reaction: double-click on message → ❤️.
+     * Если у юзера уже стоит ❤️ на этом сообщении — снимаем.
+     * Игнорируем клики по интерактивным элементам (ссылки, кнопки, реакции).
+     */
+    private readonly onDoubleClick = (ev: React.MouseEvent): void => {
+        const target = ev.target as HTMLElement;
+        // Не реагируем на двойной клик по ссылкам, кнопкам и т.д.
+        if (target.closest("a, button, [role='button'], .mx_ReactionsRow")) return;
+
+        const mxEvent = this.props.mxEvent;
+        if (!isContentActionable(mxEvent)) return;
+
+        const client = MatrixClientPeg.safeGet();
+        const me = client.getUserId();
+        const roomId = mxEvent.getRoomId();
+        const eventId = mxEvent.getId();
+        if (!me || !roomId || !eventId) return;
+
+        const QUICK_REACTION = "❤️";
+
+        // Уже есть моя ❤️ на этом сообщении? — снимаем.
+        const relations = this.state.reactions?.getRelations() ?? [];
+        const mine = relations.find(
+            (r) =>
+                r.getSender() === me &&
+                r.getContent()["m.relates_to"]?.key === QUICK_REACTION &&
+                !r.isRedacted(),
+        );
+        if (mine) {
+            client.redactEvent(roomId, mine.getId()!);
+            return;
+        }
+
+        client.sendEvent(roomId, EventType.Reaction, {
+            "m.relates_to": {
+                rel_type: RelationType.Annotation,
+                event_id: eventId,
+                key: QUICK_REACTION,
+            },
+        });
+    };
+
     private readonly onContextMenu = (ev: React.MouseEvent): void => {
         this.showContextMenu(ev);
     };
@@ -1379,6 +1423,8 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                         // on the row — including avatar / sender name — not
                         // only inside the message line.
                         "onContextMenu": this.onContextMenu,
+                        // Telegram-style: double-click → ❤️ quick reaction
+                        "onDoubleClick": this.onDoubleClick,
                     },
                     <>
                         {ircTimestamp}

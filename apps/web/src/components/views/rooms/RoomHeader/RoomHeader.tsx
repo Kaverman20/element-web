@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import React, { type JSX, useCallback, useState } from "react";
+import React, { type JSX, useCallback, useEffect, useState } from "react";
 import { Text, Button, IconButton, Menu, MenuItem, Tooltip } from "@vector-im/compound-web";
 import VideoCallIcon from "@vector-im/compound-design-tokens/assets/web/icons/video-call-solid";
 import VoiceCallIcon from "@vector-im/compound-design-tokens/assets/web/icons/voice-call-solid";
@@ -48,6 +48,8 @@ import { notificationLevelToIndicator } from "../../../../utils/notifications.ts
 import { CallGuestLinkButton } from "./CallGuestLinkButton.tsx";
 import { type ButtonEvent } from "../../elements/AccessibleButton.tsx";
 import WithPresenceIndicator, { Presence, useDmMember, usePresence } from "../../avatars/WithPresenceIndicator.tsx";
+import { usersTypingApartFromMe } from "../../../../WhoIsTyping.ts";
+import { RoomMemberEvent } from "matrix-js-sdk/src/matrix";
 import { type IOOBData } from "../../../../stores/ThreepidInviteStore.ts";
 import { MainSplitContentType } from "../../../structures/RoomView.tsx";
 import defaultDispatcher from "../../../../dispatcher/dispatcher.ts";
@@ -453,6 +455,18 @@ export default function RoomHeader({
     const e2eStatus = useEncryptionStatus(client, room);
     const askToJoinEnabled = useFeatureEnabled("feature_ask_to_join");
 
+    // Typing indicator (m.typing events). Live-updates when collaborator
+    // starts/stops typing. Takes precedence over presence subtitle.
+    const [isTyping, setIsTyping] = useState<boolean>(usersTypingApartFromMe(room).length > 0);
+    useEffect(() => {
+        const update = (): void => setIsTyping(usersTypingApartFromMe(room).length > 0);
+        client.on(RoomMemberEvent.Typing, update);
+        update();
+        return () => {
+            client.removeListener(RoomMemberEvent.Typing, update);
+        };
+    }, [client, room]);
+
     // Telegram-style presence subtitle: «в сети» / «был(а) в HH:MM».
     // Если presence отключён на сервере (matrix.org часто это делает) —
     // fallback на время последнего сообщения этого пользователя в чате.
@@ -461,13 +475,14 @@ export default function RoomHeader({
         const formatLastSeen = (ts: number): string => {
             const date = new Date(ts);
             const now = new Date();
+            const hh = String(date.getHours()).padStart(2, "0");
+            const mm = String(date.getMinutes()).padStart(2, "0");
             const sameDay = date.toDateString() === now.toDateString();
             if (sameDay) {
-                const hh = String(date.getHours()).padStart(2, "0");
-                const mm = String(date.getMinutes()).padStart(2, "0");
                 return `был(а) в ${hh}:${mm}`;
             }
-            return `был(а) ${date.toLocaleDateString(undefined, { day: "numeric", month: "long" })}`;
+            const dateStr = date.toLocaleDateString(undefined, { day: "numeric", month: "long" });
+            return `был(а) ${dateStr} в ${hh}:${mm}`;
         };
 
         if (presence === Presence.Online) {
@@ -589,15 +604,15 @@ export default function RoomHeader({
 
                                 {isRoomEncrypted && historyVisibilityIcon(historyVisibility)}
                             </Text>
-                            {presenceSubtitle && (
+                            {(isTyping || presenceSubtitle) && (
                                 <Text
                                     as="div"
                                     size="sm"
                                     weight="regular"
                                     className="mx_RoomHeader_presenceSubtitle"
-                                    data-presence={presence?.toLowerCase()}
+                                    data-presence={isTyping ? "typing" : presence?.toLowerCase()}
                                 >
-                                    {presenceSubtitle}
+                                    {isTyping ? "печатает..." : presenceSubtitle}
                                 </Text>
                             )}
                         </Box>

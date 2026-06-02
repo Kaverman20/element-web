@@ -1173,6 +1173,37 @@ body {
     color: #22c55e !important;
 }
 
+.mx_RoomHeader_presenceSubtitle[data-presence="typing"] {
+    color: #5e6ad2 !important;
+    font-style: italic;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* Плавность переключения чатов — TG-like crossfade                           */
+/* ══════════════════════════════════════════════════════════════════════════ */
+@keyframes mx_LinearChatFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Анимируется при каждом ремаунте RoomView (новый chat → новый key) */
+.mx_RoomView,
+.mx_RoomView_body,
+.mx_ScrollPanel {
+    animation: mx_LinearChatFadeIn 220ms ease-out;
+}
+
+/* Header чата тоже плавно появляется */
+.mx_RoomHeader {
+    animation: mx_LinearChatFadeIn 180ms ease-out;
+}
+
 /* ── Отключаем тултип «Просмотрел N человек» на hover галочек ────────────── */
 /* Информация о прочтении уйдёт в context-меню — как в Telegram */
 .mx_ReadReceiptGroup,
