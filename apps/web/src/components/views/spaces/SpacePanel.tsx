@@ -248,15 +248,10 @@ const CreateSpaceButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
 
     let contextMenu: JSX.Element | undefined;
     if (menuDisplayed) {
-        contextMenu = <SpaceCreateMenu onFinished={closeMenu} />;
+        contextMenu = <SpaceCreateMenu onFinished={closeMenu} left={getSidebarRight()} top={62} />;
     }
 
-    const onNewClick = menuDisplayed
-        ? closeMenu
-        : () => {
-              if (!isPanelCollapsed) setPanelCollapsed(true);
-              openMenu();
-          };
+    const onNewClick = menuDisplayed ? closeMenu : openMenu;
 
     return (
         <li
@@ -280,6 +275,43 @@ const CreateSpaceButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
             />
 
             {contextMenu}
+        </li>
+    );
+};
+
+/* Linear-theme: правая граница сайдбара (SpacePanel + LeftPanel) в пикселях.
+   Используется для адаптивного позиционирования модалок справа от сайдбара. */
+const getSidebarRight = (): number => {
+    const candidates = [".mx_LeftPanel_outerWrapper", ".mx_LeftPanel", ".mx_RoomListPanel", ".mx_SpacePanel"];
+    let maxRight = 0;
+    for (const sel of candidates) {
+        document.querySelectorAll<HTMLElement>(sel).forEach((el) => {
+            const r = el.getBoundingClientRect().right;
+            if (r > maxRight) maxRight = r;
+        });
+    }
+    return maxRight > 0 ? maxRight + 12 : 72;
+};
+
+/* Linear-theme: заголовок секции «ПРОСТРАНСТВА» с inline «+» (открывает SpaceCreateMenu). */
+const SpacesSectionHeader: React.FC = () => {
+    const [menuDisplayed, handle, openMenu, closeMenu] = useContextMenu<HTMLButtonElement>();
+    return (
+        <li className="mx_SpacePanel_sectionHeader" role="presentation">
+            <span className="mx_SpacePanel_sectionHeader_label">{_t("common|spaces").toUpperCase()}</span>
+            {shouldShowComponent(UIComponent.CreateSpaces) && (
+                <>
+                    <button
+                        ref={handle}
+                        className="mx_SpacePanel_sectionHeader_add"
+                        aria-label={_t("create_space|label")}
+                        onClick={menuDisplayed ? closeMenu : openMenu}
+                    >
+                        <PlusIcon />
+                    </button>
+                    {menuDisplayed && <SpaceCreateMenu onFinished={closeMenu} left={getSidebarRight()} top={62} />}
+                </>
+            )}
         </li>
     );
 };
@@ -332,6 +364,7 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                 aria-label={_t("common|spaces")}
             >
                 {metaSpacesSection}
+                {!isPanelCollapsed && <SpacesSectionHeader />}
                 {invites.map((s) => (
                     <SpaceItem
                         key={s.roomId}
@@ -397,6 +430,30 @@ const SpacePanel: React.FC = () => {
         if (ref.current) UIStore.instance.trackElementDimensions("SpacePanel", ref.current);
         return () => UIStore.instance.stopTrackingElementDimensions("SpacePanel");
     }, []);
+
+    /* Linear-theme: публикуем правую границу сайдбара в CSS-переменную,
+       чтобы overlay модалок мог адаптивно отступать от сайдбара. */
+    useLayoutEffect(() => {
+        const update = (): void => {
+            const candidates = [".mx_LeftPanel_outerWrapper", ".mx_LeftPanel", ".mx_RoomListPanel", ".mx_SpacePanel"];
+            let maxRight = 0;
+            for (const sel of candidates) {
+                document.querySelectorAll<HTMLElement>(sel).forEach((el) => {
+                    const r = el.getBoundingClientRect().right;
+                    if (r > maxRight) maxRight = r;
+                });
+            }
+            document.documentElement.style.setProperty("--mx-sidebar-right", `${maxRight}px`);
+        };
+        update();
+        const ro = new ResizeObserver(update);
+        document.querySelectorAll(".mx_SpacePanel, .mx_LeftPanel, .mx_LeftPanel_outerWrapper, .mx_RoomListPanel").forEach((el) => ro.observe(el));
+        window.addEventListener("resize", update);
+        return () => {
+            ro.disconnect();
+            window.removeEventListener("resize", update);
+        };
+    }, [isPanelCollapsed]);
     const sdkContext = useContext(SDKContext);
 
     useDispatcher(defaultDispatcher, (payload: ActionPayload) => {

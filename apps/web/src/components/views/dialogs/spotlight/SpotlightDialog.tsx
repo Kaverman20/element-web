@@ -40,6 +40,8 @@ import {
     GroupIcon,
     CloseIcon,
     LinkIcon,
+    ChevronRightIcon,
+    WebBrowserIcon,
 } from "@vector-im/compound-design-tokens/assets/web/icons";
 
 import { KeyBindingAction } from "../../../../accessibility/KeyboardShortcuts";
@@ -1133,7 +1135,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                                     }}
                                 >
                                     <DecoratedRoomAvatar room={room} size="32px" tooltipProps={{ tabIndex: -1 }} />
-                                    {room.name}
+                                    <span className="mx_SpotlightDialog_recentlyViewedRoom_name">{room.name}</span>
                                 </TooltipOption>
                             ))}
                     </div>
@@ -1296,7 +1298,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                         autoCapitalize="off"
                         autoCorrect="off"
                         spellCheck="false"
-                        placeholder={_t("action|search")}
+                        placeholder={_t("spotlight_dialog|linear_placeholder")}
                         value={query}
                         onChange={setQuery}
                         onKeyDown={onKeyDown}
@@ -1306,6 +1308,14 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                         aria-describedby="mx_SpotlightDialog_keyboardPrompt"
                     />
                     {(publicRoomsLoading || peopleLoading || profileLoading) && <Spinner size={24} />}
+                    <AccessibleButton
+                        className="mx_SpotlightDialog_escPill"
+                        onClick={onFinished}
+                        tabIndex={-1}
+                        aria-label={_t("spotlight_dialog|linear_tip_close_search")}
+                    >
+                        esc
+                    </AccessibleButton>
                 </div>
 
                 <div
@@ -1316,6 +1326,50 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                     aria-describedby="mx_SpotlightDialog_keyboardPrompt"
                 >
                     {content}
+                </div>
+
+                {/* Linear-theme: секция «Подсказки» с шорткатами + тоггл «Искать во всём» */}
+                <div className="mx_SpotlightDialog_linearTips" role="group">
+                    <h4 className="mx_SpotlightDialog_linearTips_title">
+                        {_t("spotlight_dialog|linear_tips_title")}
+                    </h4>
+                    <div className="mx_SpotlightDialog_linearTips_row">
+                        <span className="mx_SpotlightDialog_linearTips_keys">
+                            <kbd>↑</kbd>
+                            <kbd>↓</kbd>
+                        </span>
+                        <span>{_t("spotlight_dialog|linear_tip_navigate")}</span>
+                    </div>
+                    <div className="mx_SpotlightDialog_linearTips_row">
+                        <span className="mx_SpotlightDialog_linearTips_keys">
+                            <kbd>⏎</kbd>
+                        </span>
+                        <span>{_t("spotlight_dialog|linear_tip_open")}</span>
+                    </div>
+                    <div className="mx_SpotlightDialog_linearTips_row">
+                        <span className="mx_SpotlightDialog_linearTips_keys">
+                            <kbd>⌘</kbd>
+                            <kbd>K</kbd>
+                        </span>
+                        <span>{_t("spotlight_dialog|linear_tip_open_search")}</span>
+                    </div>
+                    <div className="mx_SpotlightDialog_linearTips_row">
+                        <span className="mx_SpotlightDialog_linearTips_keys">
+                            <kbd>esc</kbd>
+                        </span>
+                        <span>{_t("spotlight_dialog|linear_tip_close_search")}</span>
+                    </div>
+                </div>
+
+                <div className="mx_SpotlightDialog_linearSearchEverywhere">
+                    <span className="mx_SpotlightDialog_linearSearchEverywhere_label">
+                        <WebBrowserIcon />
+                        {_t("spotlight_dialog|linear_search_everywhere")}
+                    </span>
+                    <label className="mx_SpotlightDialog_linearToggle">
+                        <input type="checkbox" />
+                        <span />
+                    </label>
                 </div>
             </BaseDialog>
         </>

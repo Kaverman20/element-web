@@ -199,7 +199,9 @@ export const SpaceCreateForm: React.FC<ISpaceCreateFormProps> = ({
 
 const SpaceCreateMenu: React.FC<{
     onFinished(this: void): void;
-}> = ({ onFinished }) => {
+    left?: number;
+    top?: number;
+}> = ({ onFinished, left = 72, top = 62 }) => {
     const cli = useMatrixClientContext();
     const settingAllowPublicSpaces = useSettingValue(UIFeature.AllowCreatingPublicSpaces);
     const [visibility, setVisibility] = useState<Visibility | null>(
@@ -340,8 +342,8 @@ const SpaceCreateMenu: React.FC<{
 
     return (
         <ContextMenu
-            left={72}
-            top={62}
+            left={left}
+            top={top}
             chevronOffset={0}
             chevronFace={ChevronFace.None}
             onFinished={onFinished}
