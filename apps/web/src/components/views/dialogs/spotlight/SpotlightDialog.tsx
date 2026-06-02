@@ -40,7 +40,6 @@ import {
     GroupIcon,
     CloseIcon,
     LinkIcon,
-    ChevronRightIcon,
     WebBrowserIcon,
 } from "@vector-im/compound-design-tokens/assets/web/icons";
 
@@ -1367,7 +1366,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                         {_t("spotlight_dialog|linear_search_everywhere")}
                     </span>
                     <label className="mx_SpotlightDialog_linearToggle">
-                        <input type="checkbox" />
+                        <input type="checkbox" aria-label={_t("spotlight_dialog|linear_search_everywhere")} />
                         <span />
                     </label>
                 </div>

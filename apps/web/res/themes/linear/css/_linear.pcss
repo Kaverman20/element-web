@@ -24,10 +24,8 @@
     --cpd-color-bg-canvas-default: #ffffff;
     --cpd-color-bg-subtle-secondary: #fafafa;
     --cpd-color-bg-subtle-primary: #f4f4f5;
-
     --cpd-color-text-primary: #0a0a0a;
     --cpd-color-text-secondary: #71717a;
-
     --cpd-color-border-interactive-primary: #e4e4e7;
 
     /* ── Accent shift: Element's green scale → Linear purple ──
@@ -56,7 +54,7 @@
     --cpd-color-bg-accent-rest: #5e6ad2;
     --cpd-color-bg-accent-hovered: #4f5bc2;
     --cpd-color-bg-accent-pressed: #4148a8;
-    --cpd-color-bg-accent-subtle: rgba(94, 106, 210, 0.1);
+    --cpd-color-bg-accent-subtle: rgb(94, 106, 210, 0.1);
     --cpd-color-bg-action-primary-rest: #5e6ad2;
     --cpd-color-bg-action-primary-hovered: #4f5bc2;
     --cpd-color-bg-action-primary-pressed: #4148a8;
@@ -68,7 +66,7 @@
 html,
 body {
     font-family:
-        "Inter", "InterVariable", -apple-system, BlinkMacSystemFont,
+        Inter, InterVariable, -apple-system, BlinkMacSystemFont,
         "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -109,7 +107,7 @@ body,
 
 /* ── Selection ───────────────────────────────────────────────────────────── */
 ::selection {
-    background-color: rgba(94, 106, 210, 0.18);
+    background-color: rgb(94, 106, 210, 0.18);
     color: #0a0a0a;
 }
 
@@ -373,7 +371,7 @@ body,
     background-color: #ffffff !important;
     border: 1px solid #e4e4e7 !important;
     border-radius: 6px !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 1px 2px rgb(0, 0, 0, 0.04) !important;
 }
 
 .mx_MessageActionBar_iconButton:hover {
@@ -474,7 +472,7 @@ body,
     padding: 10px 12px !important;
     min-height: 52px !important;
     box-sizing: border-box;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 1px 2px rgb(0, 0, 0, 0.03);
     transition:
         border-color 0.12s ease,
         background-color 0.12s ease;
@@ -624,7 +622,7 @@ a:hover {
     border-radius: 6px !important;
     font-size: 12px !important;
     padding: 6px 10px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 12px rgb(0, 0, 0, 0.12) !important;
     border: none !important;
 }
 
@@ -1103,7 +1101,7 @@ body {
 }
 
 .mx_BaseCard_header [class*="_search_"] button:hover {
-    background-color: rgba(0, 0, 0, 0.06) !important;
+    background-color: rgb(0, 0, 0, 0.06) !important;
     color: #18181b !important;
 }
 
@@ -1260,13 +1258,13 @@ body {
    сообщение тоже подсвечивается — это работает как «вот где ты остановился». */
 @keyframes mx_LinearMessageFlash {
     0% {
-        background-color: rgba(94, 106, 210, 0);
+        background-color: rgb(94, 106, 210, 0);
     }
     25% {
-        background-color: rgba(94, 106, 210, 0.08);
+        background-color: rgb(94, 106, 210, 0.08);
     }
     100% {
-        background-color: rgba(94, 106, 210, 0);
+        background-color: rgb(94, 106, 210, 0);
     }
 }
 
@@ -1525,7 +1523,7 @@ a,
     background-color: #ffffff !important;
     border: 1px solid #ededef !important;
     border-radius: 8px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 2px 8px rgb(0, 0, 0, 0.04) !important;
 }
 
 /* ── Pinned-баннер сообщения — тише, без жирного фона ─────────────────────── */
@@ -1578,7 +1576,7 @@ a,
 .mx_TimelineSeparator [class*="label"],
 .mx_TimelineSeparator > span,
 .mx_TimelineSeparator > div {
-    background-color: rgba(255, 255, 255, 0.92) !important;
+    background-color: rgb(255, 255, 255, 0.92) !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: #71717a !important;
@@ -1586,7 +1584,7 @@ a,
     font-weight: 500 !important;
     padding: 5px 12px !important;
     border-radius: 999px !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 1px #ededef;
+    box-shadow: 0 1px 3px rgb(0, 0, 0, 0.06), 0 0 0 1px #ededef;
     pointer-events: auto;
 }
 
@@ -1730,7 +1728,7 @@ button,
 /* ── Композер — карточка ещё мягче, поднимаем её отдельной плоскостью ────── */
 .mx_MessageComposer_wrapper {
     border: 1px solid #ededef !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    box-shadow: 0 1px 3px rgb(0, 0, 0, 0.02) !important;
     border-radius: 14px !important;
     padding: 12px 14px !important;
 }
@@ -2208,7 +2206,7 @@ button,
 /* Blur только для крупных модалок (Dialog), НЕ для контекст-меню */
 .mx_Dialog_background,
 .mx_Dialog_background.mx_Dialog_background_overlay {
-    background-color: rgba(255, 255, 255, 0.18) !important;
+    background-color: rgb(255, 255, 255, 0.18) !important;
     backdrop-filter: blur(4px) saturate(130%) !important;
     -webkit-backdrop-filter: blur(4px) saturate(130%) !important;
     opacity: 1 !important;
@@ -2361,8 +2359,8 @@ button,
     border: 1px solid #d4d4d8 !important;
     background-color: #ffffff !important;
     box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.08),
-        0 16px 40px rgba(0, 0, 0, 0.16) !important;
+        0 2px 8px rgb(0, 0, 0, 0.08),
+        0 16px 40px rgb(0, 0, 0, 0.16) !important;
     padding: 0 !important;
     overflow: hidden !important;
 }
@@ -2594,7 +2592,7 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
 }
 .mx_SpotlightDialog_searchBox:focus-within {
     border-color: #c7c7cc !important;
-    box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.08) !important;
+    box-shadow: 0 0 0 3px rgb(94, 106, 210, 0.08) !important;
 }
 
 /* Иконка лупы слева внутри поля ввода (CSS-only через mask) */
@@ -2721,7 +2719,7 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
     font-size: 11px !important;
     font-weight: 500 !important;
     color: #52525b !important;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 1px 0 rgb(0, 0, 0, 0.04) !important;
 }
 
 /* ─── Нижний тоггл «Искать во всём» ─── */
@@ -2775,7 +2773,7 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
     background: #ffffff !important;
     border-radius: 50% !important;
     transition: transform 0.18s ease !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 1px 2px rgb(0, 0, 0, 0.15) !important;
 }
 .mx_SpotlightDialog_linearToggle input:checked + span {
     background: #5e6ad2 !important;
@@ -2792,14 +2790,14 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
     padding: 0 !important;
     margin: -1px !important;
     overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
     border: 0 !important;
 }
 
 /* Подложка спотлайта — покрывает весь экран с лёгким затемнением и blur.
    Сайдбар остаётся резким благодаря z-index: 4001 (выше overlay). */
 .mx_SpotlightDialog_wrapper .mx_Dialog_background {
-    background-color: rgba(24, 24, 27, 0.20) !important;
+    background-color: rgb(24, 24, 27, 0.20) !important;
     backdrop-filter: blur(6px) saturate(140%) !important;
     -webkit-backdrop-filter: blur(6px) saturate(140%) !important;
     left: 0 !important;
@@ -2808,10 +2806,10 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
 
 /* Сама модалка — мягкая тень + лёгкий стеклянный фон сверху */
 .mx_Dialog {
-    background-color: rgba(255, 255, 255, 0.98) !important;
+    background-color: rgb(255, 255, 255, 0.98) !important;
     border-radius: 16px !important;
     box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.04),
-        0 10px 40px rgba(0, 0, 0, 0.08),
-        0 0 0 1px rgba(255, 255, 255, 0.6) inset !important;
+        0 1px 2px rgb(0, 0, 0, 0.04),
+        0 10px 40px rgb(0, 0, 0, 0.08),
+        0 0 0 1px rgb(255, 255, 255, 0.6) inset !important;
 }
