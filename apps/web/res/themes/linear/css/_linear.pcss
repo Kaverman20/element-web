@@ -2214,6 +2214,34 @@ button,
     opacity: 1 !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* Разделители между панелями и хедерами (как в оригинальном Element)         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Вертикальные разделители колонок */
+.mx_SpacePanel {
+    border-right: 1px solid #ededef !important;
+}
+.mx_LeftPanel,
+.mx_LeftPanel_outerWrapper,
+.mx_RoomListPanel {
+    border-right: 1px solid #ededef !important;
+}
+.mx_RightPanel {
+    border-left: 1px solid #ededef !important;
+}
+
+/* Горизонтальные разделители: под шапкой чата, под верхней панелью поиска,
+   под header-ом списка комнат */
+.mx_RoomHeader {
+    border-bottom: 1px solid #ededef !important;
+}
+.mx_RoomListSearch,
+.mx_RoomListHeaderView,
+[class*="RoomListHeader"] {
+    border-bottom: 1px solid #ededef !important;
+}
+
 /* Подложка модалок не перекрывает сайдбар.
    --mx-sidebar-right выставляется JS-ом из SpacePanel.tsx адаптивно
    (реальная правая граница SpacePanel + LeftPanel при любой ширине). */
