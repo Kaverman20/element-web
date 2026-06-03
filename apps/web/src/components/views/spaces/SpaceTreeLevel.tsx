@@ -323,11 +323,23 @@ export class SpaceItem extends React.PureComponent<IItemProps, IItemState> {
 
         const collapsed = this.isCollapsed;
 
+        /* Linear-theme: рекурсивно проверяем что в поддереве этого спейса
+           есть активный — для подсветки родителя в свёрнутом сайдбаре. */
+        const hasActiveDescendant = ((): boolean => {
+            const check = (rooms: Room[]): boolean =>
+                rooms.some(
+                    (r) =>
+                        activeSpaces.includes(r.roomId) || check(SpaceStore.instance.getChildSpaces(r.roomId)),
+                );
+            return check(this.state.childSpaces ?? []);
+        })();
+
         const itemClasses = classNames(this.props.className, {
             mx_SpaceItem: true,
             mx_SpaceItem_narrow: isPanelCollapsed,
             collapsed: collapsed,
             hasSubSpaces: this.state.childSpaces?.length,
+            mx_SpaceItem_ancestorActive: hasActiveDescendant,
         });
 
         const isInvite = space.getMyMembership() === KnownMembership.Invite;

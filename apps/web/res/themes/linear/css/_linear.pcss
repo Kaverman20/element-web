@@ -43,9 +43,9 @@
     --cpd-color-green-300: #c8ceef;
     --cpd-color-green-400: #a4ade3;
     --cpd-color-green-500: #828dd7;
-    --cpd-color-green-600: #5e6ad2;
-    --cpd-color-green-700: #4f5bc2;
-    --cpd-color-green-800: #4148a8;
+    --cpd-color-green-600: #3b82f6;
+    --cpd-color-green-700: #2563eb;
+    --cpd-color-green-800: #1d4ed8;
     --cpd-color-green-900: #353b8c;
     --cpd-color-green-1000: #2a2e70;
     --cpd-color-green-1100: #232752;
@@ -54,16 +54,16 @@
     --cpd-color-green-1400: #0e101f;
 
     /* Compound accent tokens — point at the new purple */
-    --cpd-color-text-action-accent: #5e6ad2;
-    --cpd-color-icon-accent-primary: #5e6ad2;
-    --cpd-color-icon-accent-tertiary: #5e6ad2;
-    --cpd-color-bg-accent-rest: #5e6ad2;
-    --cpd-color-bg-accent-hovered: #4f5bc2;
-    --cpd-color-bg-accent-pressed: #4148a8;
-    --cpd-color-bg-accent-subtle: rgb(94, 106, 210, 0.1);
-    --cpd-color-bg-action-primary-rest: #5e6ad2;
-    --cpd-color-bg-action-primary-hovered: #4f5bc2;
-    --cpd-color-bg-action-primary-pressed: #4148a8;
+    --cpd-color-text-action-accent: #3b82f6;
+    --cpd-color-icon-accent-primary: #3b82f6;
+    --cpd-color-icon-accent-tertiary: #3b82f6;
+    --cpd-color-bg-accent-rest: #3b82f6;
+    --cpd-color-bg-accent-hovered: #2563eb;
+    --cpd-color-bg-accent-pressed: #1d4ed8;
+    --cpd-color-bg-accent-subtle: rgb(59, 130, 246, 0.1);
+    --cpd-color-bg-action-primary-rest: #3b82f6;
+    --cpd-color-bg-action-primary-hovered: #2563eb;
+    --cpd-color-bg-action-primary-pressed: #1d4ed8;
 }
 
 /* ── Typography ──────────────────────────────────────────────────────────── */
@@ -113,7 +113,7 @@ body,
 
 /* ── Selection ───────────────────────────────────────────────────────────── */
 ::selection {
-    background-color: rgb(94, 106, 210, 0.18);
+    background-color: rgb(59, 130, 246, 0.18);
     color: #0a0a0a;
 }
 
@@ -128,9 +128,10 @@ body,
     background-color: #fafafa !important;
 }
 
-/* Crisp 1px boundary between sidebar and chat (no shadow) */
-.mx_RoomListPanel,
-.mx_LeftPanel {
+/* Вертикальная линия-разделитель на ВНЕШНЕМ wrapper'е (outerWrapper выше
+   GroupView в DOM — не перекрывает compound separator внутри). Даёт
+   ощущение единой линии на всю высоту страницы. */
+.mx_LeftPanel_outerWrapper {
     border-right: 1px solid #e4e4e7 !important;
 }
 
@@ -195,19 +196,36 @@ body,
     background-color: #f4f4f5 !important;
 }
 
-/* Selected — single full-width neutral fill. Wipe any inner accent layer so
-   we don't see a purple pill nested inside the grey wrapper. */
+/* Selected — Linear-style: только левая фиолетовая полоска 3px + жирное имя.
+   Без фоновой заливки. Минимализм, акцент на контенте. */
 [class*="RoomListItemView"][aria-selected="true"],
 [class*="RoomListItemView"][data-selected="true"],
 [class*="RoomListItemView"].mx_RoomListItemView_selected {
-    background-color: #ececef !important;
+    background-color: transparent !important;
+    box-shadow: inset 3px 0 0 #3b82f6 !important;
+}
+[class*="RoomListItemView"][aria-selected="true"]:hover,
+[class*="RoomListItemView"][data-selected="true"]:hover,
+[class*="RoomListItemView"].mx_RoomListItemView_selected:hover {
+    background-color: #f4f4f5 !important;
 }
 
-/* Kill the inner accent-subtle background that Compound paints under the
-   selected button — keeps our outer fill clean and edge-to-edge. */
-[class*="RoomListItemView"][aria-selected="true"] *,
-[class*="RoomListItemView"][data-selected="true"] *,
-[class*="RoomListItemView"].mx_RoomListItemView_selected * {
+/* Имя комнаты в выбранном чате — чуть жирнее и темнее */
+[class*="RoomListItemView"][aria-selected="true"] [class*="roomName"],
+[class*="RoomListItemView"][aria-selected="true"] [class*="name"],
+[class*="RoomListItemView"][data-selected="true"] [class*="roomName"],
+[class*="RoomListItemView"][data-selected="true"] [class*="name"],
+[class*="RoomListItemView"].mx_RoomListItemView_selected [class*="roomName"],
+[class*="RoomListItemView"].mx_RoomListItemView_selected [class*="name"] {
+    color: #18181b !important;
+    font-weight: 550 !important;
+}
+
+/* Убиваем дефолтный inner accent-фон от Compound, но НЕ трогаем badge'и
+   уведомлений (compound class _unread-counter_xxx с дефисом). */
+[class*="RoomListItemView"][aria-selected="true"] *:not([class*="unread-counter"]):not([class*="NotificationBadge"]),
+[class*="RoomListItemView"][data-selected="true"] *:not([class*="unread-counter"]):not([class*="NotificationBadge"]),
+[class*="RoomListItemView"].mx_RoomListItemView_selected *:not([class*="unread-counter"]):not([class*="NotificationBadge"]) {
     background-color: transparent !important;
 }
 
@@ -570,7 +588,7 @@ a:focus-visible,
 [role="option"]:focus-visible,
 [role="tab"]:focus-visible {
     outline: none !important;
-    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #5e6ad2 !important;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #3b82f6 !important;
     border-radius: 6px;
     transition: box-shadow 0.1s ease;
 }
@@ -608,13 +626,13 @@ button {
 
 /* ── Links — accent on hover, no underline pollution ─────────────────────── */
 a {
-    color: #5e6ad2;
+    color: #3b82f6;
     text-decoration: none;
     transition: color 0.12s ease;
 }
 
 a:hover {
-    color: #4f5bc2;
+    color: #2563eb;
     text-decoration: underline;
     text-underline-offset: 2px;
     text-decoration-thickness: 1px;
@@ -995,7 +1013,7 @@ body {
 .mx_BaseCard input[type="search"],
 .mx_BaseCard input[type="text"] {
     background-color: #ffffff !important;
-    border: 1px solid #ededef !important;
+    border: 1px solid #e4e4e7 !important;
     border-radius: 8px !important;
     padding: 8px 12px !important;
     font-size: 13px !important;
@@ -1006,7 +1024,7 @@ body {
 .mx_RoomSummaryCard [class*="separator"] {
     margin: 8px 0 !important;
     border: none !important;
-    border-top: 1px solid #ededef !important;
+    border-top: 1px solid #e4e4e7 !important;
 }
 
 /* ── BaseCard header (поиск + X в шапке правой панели) ──────────────────── */
@@ -1078,7 +1096,7 @@ body {
 }
 
 .mx_BaseCard_header [class*="_search_"]:focus-within {
-    background-color: #ededef !important;
+    background-color: #e4e4e7 !important;
 }
 
 /* Compound's clear-button (X) внутри Search — спокойный серый, маленький,
@@ -1164,7 +1182,7 @@ body {
 }
 
 .mx_SpacePanel .mx_NotificationBadge {
-    background-color: #5e6ad2 !important;
+    background-color: #3b82f6 !important;
     color: #ffffff !important;
     font-size: 10px !important;
     font-weight: 600 !important;
@@ -1228,7 +1246,7 @@ body {
 }
 
 .mx_RoomHeader_presenceSubtitle[data-presence="typing"] {
-    color: #5e6ad2 !important;
+    color: #3b82f6 !important;
     font-style: italic;
 }
 
@@ -1264,13 +1282,13 @@ body {
    сообщение тоже подсвечивается — это работает как «вот где ты остановился». */
 @keyframes mx_LinearMessageFlash {
     0% {
-        background-color: rgb(94, 106, 210, 0);
+        background-color: rgb(59, 130, 246, 0);
     }
     25% {
-        background-color: rgb(94, 106, 210, 0.08);
+        background-color: rgb(59, 130, 246, 0.08);
     }
     100% {
-        background-color: rgb(94, 106, 210, 0);
+        background-color: rgb(59, 130, 246, 0);
     }
 }
 
@@ -1403,7 +1421,7 @@ a,
         transform 0.12s ease !important;
 }
 
-/* ── Облегчение всех границ — заменяем #e4e4e7 на ещё светлее #ededef ───── */
+/* ── Облегчение всех границ — заменяем #e4e4e7 на ещё светлее #e4e4e7 ───── */
 .mx_RoomListPanel,
 .mx_LeftPanel,
 .mx_RightPanel,
@@ -1411,13 +1429,13 @@ a,
 .mx_MessageComposer,
 .mx_BaseCard_header,
 .mx_RoomSummaryCard_container {
-    border-color: #ededef !important;
+    border-color: #e4e4e7 !important;
 }
 
 /* Совсем убираем тени в композере — пусть будет просто чистая рамка */
 .mx_MessageComposer_wrapper {
     box-shadow: none !important;
-    border-color: #ededef !important;
+    border-color: #e4e4e7 !important;
 }
 
 /* ── Снижаем визуальный вес SpacePanel-бейджей ────────────────────────────── */
@@ -1425,7 +1443,7 @@ a,
 .mx_SpacePanel .mx_NotificationBadge,
 .mx_SpacePanel [class*="NotificationBadge"],
 .mx_SpaceButton .mx_NotificationBadge {
-    background-color: #5e6ad2 !important;
+    background-color: #3b82f6 !important;
     color: #ffffff !important;
     font-size: 10px !important;
     font-weight: 500 !important;
@@ -1436,10 +1454,10 @@ a,
     box-shadow: none !important;
 }
 
-/* SpacePanel — БЕЛЫЙ как в референсе, тёмные иконки на нём */
+/* SpacePanel — БЕЛЫЙ как в референсе, тёмные иконки на нём.
+   (border-right восстанавливается ниже на ~2238 как разделитель колонок) */
 .mx_SpacePanel {
     background-color: #ffffff !important;
-    border-right: none !important;
 }
 
 .mx_SpacePanel,
@@ -1453,10 +1471,11 @@ a,
     color: #71717a !important;
 }
 
+/* Hover/selected — без подложки. Активный спейс обозначается только
+   левой синей полоской (см. ниже). */
 .mx_SpaceButton:hover,
-.mx_SpaceButton_selected {
-    background-color: #f4f4f5 !important;
-    border-radius: 8px;
+.mx_SpaceButton:hover .mx_SpaceButton_selectionWrapper {
+    background-color: transparent !important;
 }
 
 /* UserMenu (К-аватар вверху) — тоже белый, без рамки */
@@ -1483,14 +1502,7 @@ a,
     color: #18181b !important;
 }
 
-/* ── Облегчаем шрифты комнат в списке (450→400, 13.5→13) ─────────────────── */
-[class*="RoomListItemView"] [class*="roomName"],
-[class*="RoomListItemView"] [class*="name"],
-[class*="RoomListItemView"] [class*="title"] {
-    font-size: 13px !important;
-    font-weight: 450 !important;
-    color: #27272a !important;
-}
+/* (дубликат font-size для room names удалён — актуальное правило ~строка 232) */
 
 /* ── Header чата чуть тоньше ──────────────────────────────────────────────── */
 /* Имя комнаты — 15/600 вместо 16/650 */
@@ -1520,14 +1532,14 @@ a,
 /* ── Облегчение поля поиска — невидимая рамка пока не в фокусе ───────────── */
 .mx_RoomSearch {
     background-color: #ffffff !important;
-    border: 1px solid #ededef !important;
+    border: 1px solid #e4e4e7 !important;
     box-shadow: none !important;
 }
 
 /* ── Уменьшаем визуальный шум action-bar при hover ────────────────────────── */
 .mx_MessageActionBar {
     background-color: #ffffff !important;
-    border: 1px solid #ededef !important;
+    border: 1px solid #e4e4e7 !important;
     border-radius: 8px !important;
     box-shadow: 0 2px 8px rgb(0, 0, 0, 0.04) !important;
 }
@@ -1535,7 +1547,7 @@ a,
 /* ── Pinned-баннер сообщения — тише, без жирного фона ─────────────────────── */
 .mx_PinnedMessageBanner {
     background-color: #fafafa !important;
-    border-bottom: 1px solid #ededef !important;
+    border-bottom: 1px solid #e4e4e7 !important;
     box-shadow: none !important;
 }
 
@@ -1590,7 +1602,7 @@ a,
     font-weight: 500 !important;
     padding: 5px 12px !important;
     border-radius: 999px !important;
-    box-shadow: 0 1px 3px rgb(0, 0, 0, 0.06), 0 0 0 1px #ededef;
+    box-shadow: 0 1px 3px rgb(0, 0, 0, 0.06), 0 0 0 1px #e4e4e7;
     pointer-events: auto;
 }
 
@@ -1639,18 +1651,15 @@ button,
 /* Шаг 8b — Видимые сдвиги: убираем тяжесть структурно                        */
 /* ══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Полностью УБИРАЕМ границы между панелями — оставляем только цвет ────── */
-/* Сейчас сайдбар отделён 1px-границей от чата. Уберём её — пусть отделяет
-   только разница в фоне (#fafafa сайдбар vs #ffffff чат). Это самое сильное
-   ощущение «лёгкости» — нет линий, есть плоскости. */
+/* Убираем border-right с LeftPanel/RoomListPanel — он бы визуально перекрывал
+   compound .mx_Separator (resize-handle). Разделитель колонок рисуется на
+   .mx_LeftPanel_outerWrapper (строка ~134). */
 .mx_RoomListPanel,
 .mx_LeftPanel {
     border-right: none !important;
 }
-
-.mx_RightPanel {
-    border-left: none !important;
-}
+/* (старый border-left: none на .mx_RightPanel удалён — переопределён
+   на строке ~2241 рабочим разделителем колонок) */
 
 /* Header чата БЕЗ нижней границы — отделяется только белым фоном */
 .mx_RoomHeader {
@@ -1733,7 +1742,7 @@ button,
 
 /* ── Композер — карточка ещё мягче, поднимаем её отдельной плоскостью ────── */
 .mx_MessageComposer_wrapper {
-    border: 1px solid #ededef !important;
+    border: 1px solid #e4e4e7 !important;
     box-shadow: 0 1px 3px rgb(0, 0, 0, 0.02) !important;
     border-radius: 14px !important;
     padding: 12px 14px !important;
@@ -1747,7 +1756,7 @@ button,
 
 /* ── Search в сайдбаре — невидимая рамка, ещё легче ──────────────────────── */
 .mx_RoomSearch {
-    border-color: #ededef !important;
+    border-color: #e4e4e7 !important;
     background-color: #ffffff !important;
 }
 
@@ -1776,36 +1785,12 @@ button,
     display: none !important;
 }
 
-/* 4. Selected-комната — БЕЗ серого фона, только небольшое визуальное
-   указание через жирность имени (как в референсе) */
-[class*="RoomListItemView"][aria-selected="true"],
-[class*="RoomListItemView"][data-selected="true"],
-[class*="RoomListItemView"].mx_RoomListItemView_selected {
-    background-color: transparent !important;
-}
-
-/* Жирнее имя у выбранной комнаты — это и есть «выделение» */
-[class*="RoomListItemView"][aria-selected="true"] [class*="roomName"],
-[class*="RoomListItemView"][aria-selected="true"] [class*="name"],
-[class*="RoomListItemView"][aria-selected="true"] [class*="title"],
-[class*="RoomListItemView"][data-selected="true"] [class*="roomName"],
-[class*="RoomListItemView"][data-selected="true"] [class*="name"],
-[class*="RoomListItemView"][data-selected="true"] [class*="title"] {
-    font-weight: 600 !important;
-    color: #0a0a0a !important;
-}
+/* (старый блок «selected без фона» удалён — конфликтовал с новым highlight.
+   Актуальные правила выделения комнаты см. выше, ~строки 200-225) */
 
 /* 5. Бейдж непрочитанных у комнаты — в виде точки справа, а не цифры */
-[class*="RoomListItemView"] [class*="unreadCounter"],
-[class*="RoomListItemView"] [class*="NotificationBadge"] {
-    font-size: 10px !important;
-    min-width: 14px !important;
-    height: 14px !important;
-    padding: 0 4px !important;
-    border-radius: 7px !important;
-    background-color: #71717a !important;
-    color: #ffffff !important;
-}
+/* (Badge стиль не переопределяем — compound сам корректно рисует unread-counter
+   как зелёный кружок 20×20. Стилизация _unread-counter удалена.) */
 
 /* Inner editor — strip any extra border/bg */
 .mx_BasicMessageComposer,
@@ -1825,7 +1810,7 @@ button,
 .mx_MessageComposer_sendMessage,
 .mx_MessageComposer button[aria-label*="Отправить"],
 .mx_MessageComposer button[aria-label*="Send"] {
-    background-color: #5e6ad2 !important;
+    background-color: #3b82f6 !important;
     color: #ffffff !important;
     border-radius: 8px !important;
     transition: background-color 0.12s ease;
@@ -1834,7 +1819,7 @@ button,
 .mx_MessageComposer_sendMessage:hover,
 .mx_MessageComposer button[aria-label*="Отправить"]:hover,
 .mx_MessageComposer button[aria-label*="Send"]:hover {
-    background-color: #4f5bc2 !important;
+    background-color: #2563eb !important;
 }
 
 /* Side icons (emoji, attach, more) — muted, hover darkens */
@@ -1874,14 +1859,26 @@ button,
     min-width: 0 !important;
 }
 
-/* Аватарка O — квадратно-скруглённая 36px (compound Avatar делает круг). */
+/* Аватарка пользователя — единый стиль с плитками спейсов:
+   40×40 квадрат, border-radius 10px, без outline/border (как в плитках) */
 .mx_UserMenu button > span,
-.mx_UserMenu button > span > * {
-    border-radius: 8px !important;
-}
+.mx_UserMenu button > span > *,
 .mx_UserMenu button img,
-.mx_UserMenu button [class*="avatar"] {
-    border-radius: 8px !important;
+.mx_UserMenu button [class*="avatar"],
+.mx_UserMenu button [class*="Avatar"] {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    border-radius: 10px !important;
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    object-fit: cover !important;
+}
+/* Inline-style size="36px" от compound Avatar — перебиваем */
+.mx_UserMenu button [style*="--cpd-avatar-size"] {
+    --cpd-avatar-size: 40px !important;
 }
 
 /* Имя пользователя — sibling <span> внутри wrapper, обрезаем по ellipsis. */
@@ -1991,28 +1988,120 @@ button,
     border-radius: 10px !important;
 }
 
-/* Home-иконка крупнее, чтобы визуально сравняться с цифровыми плитками */
+/* Home-иконка крупнее + центрирование (по умолчанию compound сдвигает её
+   вниз-вправо). Принудительно flex-center на контейнере иконки. */
+.mx_SpaceButton_narrow .mx_SpaceButton_icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    position: static !important;
+    margin: 0 !important;
+}
 .mx_SpaceButton_narrow .mx_SpaceButton_icon svg {
     width: 22px !important;
     height: 22px !important;
+    display: block !important;
+    margin: 0 !important;
 }
 
-/* Активный home/spaces в свёрнутом — убираем 3px чёрный border, ставим
-   мягкую серую подложку. Дефолт: .mx_SpaceButton_active.mx_SpaceButton_narrow
-   .mx_SpaceButton_selectionWrapper { border: 3px solid black }. */
+/* Активный home/spaces в свёрнутом — все блоки СТРОГО одного размера 44×44.
+   Никаких серых подложек, никакого padding. */
+.mx_SpaceButton_narrow .mx_SpaceButton_selectionWrapper,
 .mx_SpaceButton_narrow.mx_SpaceButton_active .mx_SpaceButton_selectionWrapper,
+.mx_SpacePanel.collapsed .mx_SpaceButton .mx_SpaceButton_selectionWrapper,
 .mx_SpacePanel.collapsed .mx_SpaceButton_active .mx_SpaceButton_selectionWrapper {
     border: none !important;
     outline: none !important;
-    box-shadow: none !important;
     padding: 0 !important;
-    background-color: #f4f4f5 !important;
+    background-color: transparent !important;
     border-radius: 10px !important;
+    box-shadow: none !important;
+    width: 44px !important;
+    height: 44px !important;
+}
+/* Все внутренности — НЕТ серой подложки */
+.mx_SpaceButton_narrow .mx_SpaceButton_avatarPlaceholder,
+.mx_SpaceButton_narrow.mx_SpaceButton_active .mx_SpaceButton_avatarPlaceholder {
+    background-color: transparent !important;
+}
+
+/* Синяя полоска — позиционируется относительно selectionWrapper (плитки),
+   но визуально сидит СЛЕВА от неё (left: -8px) с overflow: visible.
+   Не обрезается скруглением плитки. */
+.mx_SpaceButton_narrow.mx_SpaceButton_active .mx_SpaceButton_selectionWrapper,
+.mx_SpacePanel.collapsed .mx_SpaceButton_active .mx_SpaceButton_selectionWrapper {
+    position: relative !important;
+    overflow: visible !important;
+}
+.mx_SpaceButton_narrow.mx_SpaceButton_active .mx_SpaceButton_selectionWrapper::before,
+.mx_SpacePanel.collapsed .mx_SpaceButton_active .mx_SpaceButton_selectionWrapper::before {
+    content: "" !important;
+    position: absolute !important;
+    left: -8px !important;
+    top: 4px !important;
+    bottom: 4px !important;
+    width: 3px !important;
+    background: #3b82f6 !important;
+    border-radius: 999px !important;
+}
+
+/* Подсветка родительского спейса в свёрнутом сайдбаре: если в поддереве
+   этого спейса есть активный — родитель тоже получает синюю полоску
+   (Discord-стиль). Класс mx_SpaceItem_ancestorActive ставится из SpaceTreeLevel.
+   Полоска короче и полупрозрачная — отличается от настоящего active.
+   Применяем через ::before на самой плитке (avatarWrapper/Placeholder)
+   для совместимости с Safari (избегаем overflow:visible на родителе). */
+.mx_SpacePanel.collapsed .mx_SpaceItem_ancestorActive .mx_SpaceButton_avatarWrapper,
+.mx_SpacePanel.collapsed .mx_SpaceItem_ancestorActive .mx_SpaceButton_avatarPlaceholder {
+    position: relative !important;
+    overflow: visible !important;
+}
+.mx_SpacePanel.collapsed .mx_SpaceItem_ancestorActive .mx_SpaceButton_avatarWrapper::before,
+.mx_SpacePanel.collapsed .mx_SpaceItem_ancestorActive .mx_SpaceButton_avatarPlaceholder::before {
+    content: "" !important;
+    position: absolute !important;
+    left: -8px !important;
+    top: 8px !important;
+    bottom: 8px !important;
+    width: 3px !important;
+    background-color: #3b82f6 !important;
+    border-radius: 999px !important;
+    opacity: 0.5 !important;
+    z-index: 1 !important;
 }
 
 .mx_SpaceButton_narrow.mx_SpaceButton_active .mx_SpaceButton_avatarPlaceholder {
     background-color: transparent !important;
     border-radius: 10px !important;
+}
+
+/* ЖЁСТКАЯ унификация ВСЕХ внутренних блоков narrow space-кнопок до 40×40.
+   Бьём дефолтные стили Element и compound на каждом уровне. */
+.mx_SpacePanel.collapsed .mx_SpaceButton .mx_SpaceButton_avatarPlaceholder,
+.mx_SpacePanel.collapsed .mx_SpaceButton .mx_SpaceButton_avatarWrapper,
+.mx_SpacePanel.collapsed .mx_SpaceButton .mx_BaseAvatar,
+.mx_SpacePanel.collapsed .mx_SpaceButton .mx_BaseAvatar > * {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
+    box-sizing: border-box !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* Картинка-аватар спейса (загруженная пользователем) — заполняет всю плитку
+   через object-fit: cover (без прозрачных полей вокруг логотипа). */
+.mx_SpacePanel .mx_SpaceButton .mx_BaseAvatar img,
+.mx_SpacePanel .mx_SpaceButton img[src] {
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* «+» (создать пространство) в свёрнутом виде — тоже 44×44 */
@@ -2075,9 +2164,10 @@ button,
     padding-left: 12px !important;
 }
 
+/* Selected space — без фона, только левая синяя полоска (как в room list) */
 .mx_SpacePanel .mx_SpaceButton_active .mx_SpaceButton_selectionWrapper {
-    background-color: #f4f4f5 !important;
-    box-shadow: none !important;
+    background-color: transparent !important;
+    box-shadow: inset 3px 0 0 #3b82f6 !important;
 }
 
 /* Убираем дефолтную вертикальную полоску ::before у активного спейса */
@@ -2134,7 +2224,7 @@ button,
 
 /* ─── 6. Разделитель перед «+ Создать пространство» ──────────────────────── */
 .mx_SpacePanel:not(.collapsed) .mx_SpaceItem_new {
-    border-top: 1px solid #ededef !important;
+    border-top: 1px solid #e4e4e7 !important;
     margin-top: 8px !important;
     padding-top: 8px !important;
 }
@@ -2155,7 +2245,7 @@ button,
 
 /* Тонкий разделитель над нижним блоком (Обсуждения/Настройки) */
 .mx_SpacePanel:not(.collapsed) .mx_ThreadsActivityCentreButton {
-    border-top: 1px solid #ededef !important;
+    border-top: 1px solid #e4e4e7 !important;
     padding-top: 12px !important;
     margin-left: -12px !important;
     margin-right: -12px !important;
@@ -2209,6 +2299,19 @@ button,
 /* с backdrop-filter: blur — frosted glass эффект как в macOS / iOS.           */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
+/* Sidebar (SpacePanel + LeftPanel + RoomListPanel) — z-index выше backdrop'а
+   модалок (по умолчанию 4000), чтобы оставался резким при открытии Dialog.
+   ВРЕМЕННО ОТКЛЮЧЕНО: ломает compound resize separator. */
+/*
+.mx_SpacePanel,
+.mx_LeftPanel,
+.mx_LeftPanel_outerWrapper,
+.mx_RoomListPanel {
+    z-index: 4001 !important;
+    position: relative !important;
+}
+*/
+
 /* Blur только для крупных модалок (Dialog), НЕ для контекст-меню */
 .mx_Dialog_background,
 .mx_Dialog_background.mx_Dialog_background_overlay {
@@ -2230,17 +2333,60 @@ button,
 /* Разделители между панелями и хедерами (как в оригинальном Element)         */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Вертикальные разделители колонок */
+/* Вертикальные разделители колонок.
+   ВАЖНО: НЕ ставим border-right на LeftPanel/RoomListPanel — иначе он
+   визуально перекрывает clickable compound .mx_Separator (тот рисует
+   свою 1px полоску, кликаемую). Только SpacePanel и RightPanel,
+   у них separator'а нет. */
 .mx_SpacePanel {
-    border-right: 1px solid #ededef !important;
-}
-.mx_LeftPanel,
-.mx_LeftPanel_outerWrapper,
-.mx_RoomListPanel {
-    border-right: 1px solid #ededef !important;
+    border-right: 1px solid #e4e4e7 !important;
 }
 .mx_RightPanel {
-    border-left: 1px solid #ededef !important;
+    border-left: 1px solid #e4e4e7 !important;
+}
+
+/* Compound Separator — невидимая 4px полоска без фона.
+   Линия рисуется border'ом на .mx_LeftPanel_outerWrapper (на всю высоту).
+   DragIcon (стрелки ↔) показываются ТОЛЬКО при hover. */
+.mx_Separator {
+    width: 0 !important;
+    height: 100% !important;
+    align-self: stretch !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: col-resize !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    /* физически 0px ширины (нет gap), но 8px кликабельной зоны */
+    margin: 0 -4px !important;
+    padding: 0 4px !important;
+}
+
+/* SVG-иконка (стрелки) скрыта по умолчанию, появляется при hover/active */
+.mx_Separator svg {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    position: relative;
+    z-index: 1;
+}
+.mx_Separator:hover svg,
+.mx_Separator[data-separator="active"] svg {
+    opacity: 1;
+}
+
+/* Badge на home-кнопке («Мои чаты») клипается родительскими контейнерами.
+   Снимаем overflow:hidden у всей цепочки от SpacePanel до badge. */
+.mx_SpacePanel,
+.mx_SpacePanel ul,
+.mx_SpacePanel li,
+.mx_SpacePanel .mx_AutoHideScrollbar,
+.mx_SpaceTreeLevel,
+.mx_SpaceItem,
+.mx_SpaceButton,
+.mx_SpaceButton_avatarPlaceholder,
+.mx_SpaceButton_avatarWrapper,
+.mx_SpaceButton .mx_SpacePanel_badgeContainer {
+    overflow: visible !important;
 }
 
 /* FacePile в шапке чата (аватар + счётчик участников) — компактная pill */
@@ -2275,12 +2421,12 @@ button,
 /* Горизонтальные разделители: под шапкой чата, под верхней панелью поиска,
    под header-ом списка комнат */
 .mx_RoomHeader {
-    border-bottom: 1px solid #ededef !important;
+    border-bottom: 1px solid #e4e4e7 !important;
 }
 .mx_RoomListSearch,
 .mx_RoomListHeaderView,
 [class*="RoomListHeader"] {
-    border-bottom: 1px solid #ededef !important;
+    border-bottom: 1px solid #e4e4e7 !important;
 }
 
 /* ─── Закреплённые сообщения: компактный двухстрочный блок ── */
@@ -2289,7 +2435,7 @@ button,
     height: auto !important;
     min-height: 44px !important;
     background: #fafafa !important;
-    border-bottom: 1px solid #ededef !important;
+    border-bottom: 1px solid #e4e4e7 !important;
     box-shadow: none !important;
 }
 
@@ -2348,14 +2494,8 @@ button,
     display: none !important;
 }
 
-/* Подложка модалок не перекрывает сайдбар.
-   --mx-sidebar-right выставляется JS-ом из SpacePanel.tsx адаптивно
-   (реальная правая граница SpacePanel + LeftPanel при любой ширине). */
-.mx_Dialog_background,
-.mx_ContextualMenu_background {
-    left: var(--mx-sidebar-right, 0px) !important;
-    width: calc(100% - var(--mx-sidebar-right, 0px)) !important;
-}
+/* (старая логика offset под sidebar удалена — больше не нужна,
+   sidebar теперь имеет z-index: 4001 выше backdrop'а 4000) */
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /* SpotlightDialog (Cmd+K / клик по «Поиск») — Linear-стиль + плавность       */
@@ -2428,7 +2568,7 @@ button,
 /* Подсказка с клавишами наверху */
 #mx_SpotlightDialog_keyboardPrompt {
     background-color: #fafafa !important;
-    border-bottom: 1px solid #ededef !important;
+    border-bottom: 1px solid #e4e4e7 !important;
     padding: 10px 20px !important;
     font-size: 12px !important;
     color: #71717a !important;
@@ -2621,13 +2761,13 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
     padding: 0 16px !important;
     padding-right: 60px !important;
     background: #ffffff !important;
-    border: 1px solid #ededef !important;
+    border: 1px solid #e4e4e7 !important;
     border-radius: 12px !important;
     transition: border-color 0.12s ease, box-shadow 0.12s ease !important;
 }
 .mx_SpotlightDialog_searchBox:focus-within {
     border-color: #c7c7cc !important;
-    box-shadow: 0 0 0 3px rgb(94, 106, 210, 0.08) !important;
+    box-shadow: 0 0 0 3px rgb(59, 130, 246, 0.08) !important;
 }
 
 /* Иконка лупы слева внутри поля ввода (CSS-only через mask) */
@@ -2663,7 +2803,7 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
     font-family: ui-monospace, "SF Mono", monospace !important;
     text-transform: lowercase !important;
     line-height: 1.4 !important;
-    border: 1px solid #ededef !important;
+    border: 1px solid #e4e4e7 !important;
     cursor: pointer !important;
     transition: background 0.12s ease !important;
 }
@@ -2693,7 +2833,7 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
 
 /* Разделители между секциями — inset 20px от краёв (как у дефолтной) */
 .mx_SpotlightDialog_section + .mx_SpotlightDialog_section {
-    border-top: 1px solid #ededef !important;
+    border-top: 1px solid #e4e4e7 !important;
     margin-top: 4px !important;
 }
 .mx_SpotlightDialog_linearTips,
@@ -2710,7 +2850,7 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
     left: 20px !important;
     right: 20px !important;
     height: 1px !important;
-    background: #ededef !important;
+    background: #e4e4e7 !important;
 }
 
 /* ─── Секция «Подсказки» ─── */
@@ -2748,7 +2888,7 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
     height: 22px !important;
     padding: 0 6px !important;
     background: #ffffff !important;
-    border: 1px solid #ededef !important;
+    border: 1px solid #e4e4e7 !important;
     border-radius: 5px !important;
     font-family: ui-monospace, "SF Mono", monospace !important;
     font-size: 11px !important;
@@ -2811,7 +2951,7 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
     box-shadow: 0 1px 2px rgb(0, 0, 0, 0.15) !important;
 }
 .mx_SpotlightDialog_linearToggle input:checked + span {
-    background: #5e6ad2 !important;
+    background: #3b82f6 !important;
 }
 .mx_SpotlightDialog_linearToggle input:checked + span::before {
     transform: translateX(16px) !important;
@@ -2829,14 +2969,12 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
     border: 0 !important;
 }
 
-/* Подложка спотлайта — покрывает весь экран с лёгким затемнением и blur.
-   Сайдбар остаётся резким благодаря z-index: 4001 (выше overlay). */
+/* Подложка спотлайта — чуть плотнее общего blur'а Dialog.
+   Sidebar остаётся резким (z-index 4001 у sidebar выше backdrop'а 4000). */
 .mx_SpotlightDialog_wrapper .mx_Dialog_background {
     background-color: rgb(24, 24, 27, 0.20) !important;
     backdrop-filter: blur(6px) saturate(140%) !important;
     -webkit-backdrop-filter: blur(6px) saturate(140%) !important;
-    left: 0 !important;
-    width: 100% !important;
 }
 
 /* Сама модалка — мягкая тень + лёгкий стеклянный фон сверху */
@@ -2847,4 +2985,66 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
         0 1px 2px rgb(0, 0, 0, 0.04),
         0 10px 40px rgb(0, 0, 0, 0.08),
         0 0 0 1px rgb(255, 255, 255, 0.6) inset !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* Снять серые hover-подсветки со ВСЕХ UI-элементов (сайдбар, шапка, кнопки,  */
+/* список комнат, настройки). Серый bg остаётся ТОЛЬКО в чате (выделение      */
+/* сообщения, контекст-меню реакций).                                          */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+.mx_RoomHeader button:hover,
+.mx_RoomHeader [role="button"]:hover,
+.mx_LeftPanel button:hover,
+.mx_LeftPanel [role="button"]:hover,
+.mx_LeftPanel a:hover,
+.mx_SpacePanel button:hover,
+.mx_SpacePanel [role="button"]:hover,
+.mx_BaseCard button:hover,
+.mx_BaseCard [role="button"]:hover,
+.mx_RoomSummaryCard button:hover,
+.mx_UserMenu button:hover,
+[class*="RoomListItemView"]:hover,
+.mx_AccessibleButton:hover {
+    background-color: transparent !important;
+}
+
+/* Compound room-list item: hover-bg задаётся на дочернем .container
+   (CSS-module). Селектор по hashed-классам не сработает напрямую,
+   целимся через :hover родителя на любой потомок-контейнер. */
+[class*="roomListItem"]:hover [class*="container"],
+[class*="roomListItem"]:focus-visible [class*="container"],
+[class*="roomListItem"][data-state="open"] [class*="container"] {
+    background-color: transparent !important;
+}
+
+/* В свёрнутом сайдбаре прячем chevron-toggle разворачивания дочерних
+   спейсов — в narrow-режиме нет места под отступ для вложенных.
+   Дочерние спейсы видны только при раскрытом сайдбаре. */
+.mx_SpacePanel.collapsed .mx_SpaceButton_toggleCollapse,
+.mx_SpaceButton_narrow .mx_SpaceButton_toggleCollapse {
+    display: none !important;
+}
+
+/* Активный (selected) — синяя полоска уже даёт сигнал, фон не нужен */
+.mx_RoomHeader button:hover svg,
+.mx_LeftPanel button:hover svg,
+.mx_SpacePanel button:hover svg {
+    color: #0a0a0a !important;
+}
+
+/* Settings/Dialog модалки — убрать «ореол» от чрезмерной тени */
+.mx_Dialog,
+.mx_Dialog_wrapper .mx_Dialog {
+    box-shadow:
+        0 1px 2px rgb(0, 0, 0, 0.04),
+        0 8px 24px rgb(0, 0, 0, 0.08) !important;
+}
+
+/* Исключение: чат-сообщения (выделение/right-click) и контекст-меню — серый остаётся */
+.mx_EventTile_selected,
+.mx_EventTile:hover .mx_EventTile_line,
+.mx_EventTile_actionBar,
+.mx_ContextualMenu,
+.mx_MessageActionBar {
+    /* (намеренно ничего не сбрасываем — оригинальные стили работают) */
 }

@@ -294,27 +294,13 @@ const getSidebarRight = (): number => {
 };
 
 /* Linear-theme: заголовок секции «ПРОСТРАНСТВА» с inline «+» (открывает SpaceCreateMenu). */
-const SpacesSectionHeader: React.FC = () => {
-    const [menuDisplayed, handle, openMenu, closeMenu] = useContextMenu<HTMLButtonElement>();
-    return (
-        <li className="mx_SpacePanel_sectionHeader" role="presentation">
-            <span className="mx_SpacePanel_sectionHeader_label">{_t("common|spaces").toUpperCase()}</span>
-            {shouldShowComponent(UIComponent.CreateSpaces) && (
-                <>
-                    <button
-                        ref={handle}
-                        className="mx_SpacePanel_sectionHeader_add"
-                        aria-label={_t("create_space|label")}
-                        onClick={menuDisplayed ? closeMenu : openMenu}
-                    >
-                        <PlusIcon />
-                    </button>
-                    {menuDisplayed && <SpaceCreateMenu onFinished={closeMenu} left={getSidebarRight()} top={62} />}
-                </>
-            )}
-        </li>
-    );
-};
+/* Чисто визуальный заголовок секции — без inline-кнопки «+»,
+   функция «создать» доступна через нижнюю кнопку «+ Создать пространство». */
+const SpacesSectionHeader: React.FC = () => (
+    <li className="mx_SpacePanel_sectionHeader" role="presentation">
+        <span className="mx_SpacePanel_sectionHeader_label">{_t("common|spaces").toUpperCase()}</span>
+    </li>
+);
 
 const metaSpaceComponentMap: Record<MetaSpace, typeof HomeButton> = {
     [MetaSpace.Home]: HomeButton,
@@ -431,29 +417,9 @@ const SpacePanel: React.FC = () => {
         return () => UIStore.instance.stopTrackingElementDimensions("SpacePanel");
     }, []);
 
-    /* Linear-theme: публикуем правую границу сайдбара в CSS-переменную,
-       чтобы overlay модалок мог адаптивно отступать от сайдбара. */
-    useLayoutEffect(() => {
-        const update = (): void => {
-            const candidates = [".mx_LeftPanel_outerWrapper", ".mx_LeftPanel", ".mx_RoomListPanel", ".mx_SpacePanel"];
-            let maxRight = 0;
-            for (const sel of candidates) {
-                document.querySelectorAll<HTMLElement>(sel).forEach((el) => {
-                    const r = el.getBoundingClientRect().right;
-                    if (r > maxRight) maxRight = r;
-                });
-            }
-            document.documentElement.style.setProperty("--mx-sidebar-right", `${maxRight}px`);
-        };
-        update();
-        const ro = new ResizeObserver(update);
-        document.querySelectorAll(".mx_SpacePanel, .mx_LeftPanel, .mx_LeftPanel_outerWrapper, .mx_RoomListPanel").forEach((el) => ro.observe(el));
-        window.addEventListener("resize", update);
-        return () => {
-            ro.disconnect();
-            window.removeEventListener("resize", update);
-        };
-    }, [isPanelCollapsed]);
+    /* (Раньше публиковали --mx-sidebar-right для offset'а overlay модалок.
+       Больше не нужно — sidebar получает z-index: 4001 в _linear.pcss
+       и оказывается над backdrop'ом без необходимости его обрезать.) */
     const sdkContext = useContext(SDKContext);
 
     useDispatcher(defaultDispatcher, (payload: ActionPayload) => {
