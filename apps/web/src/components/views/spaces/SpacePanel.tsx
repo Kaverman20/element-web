@@ -21,7 +21,7 @@ import React, {
     useState,
     useContext,
 } from "react";
-import { DragDropContext, Draggable, Droppable, type DroppableProvidedProps } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable, type DroppableProvidedProps } from "@hello-pangea/dnd";
 import classNames from "classnames";
 import { type Room } from "matrix-js-sdk/src/matrix";
 import {

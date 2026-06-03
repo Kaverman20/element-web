@@ -178,10 +178,42 @@ body,
     box-shadow: inset 0 -1px 0 #e4e4e7;
 }
 
-/* Крупная аватарка как в TG */
+/* Убираем «вырез» из аватара под decoration-иконку.
+   - Старый Element: .mx_DecoratedRoomAvatar_cutout
+   - Новый Element RoomAvatarView: .mx_RoomAvatarView_RoomAvatar_icon / _presence
+   - Compound: ._indicator-icon_xxx[data-indicator] svg */
+.mx_DecoratedRoomAvatar_cutout .mx_BaseAvatar,
+.mx_DecoratedRoomAvatar.mx_DecoratedRoomAvatar_cutout .mx_BaseAvatar,
+.mx_RoomAvatarView .mx_RoomAvatarView_RoomAvatar,
+.mx_RoomAvatarView_RoomAvatar_icon,
+.mx_RoomAvatarView_RoomAvatar_presence,
+[class*="indicator-icon"][data-indicator] svg,
+[class*="indicator-icon"][data-indicator] {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+}
+
+/* Decoration-иконка (globe для public-комнат) — сдвигаем чуть правее,
+   чтобы она аккуратно сидела вне круга аватара, а не залезала на него. */
+.mx_RoomAvatarView .mx_RoomAvatarView_icon {
+    left: calc(var(--room-avatar-size) - 4px) !important;
+    bottom: -2px !important;
+}
+
+/* E2E-индикатор шифрования в композере — скрываем (placeholder и так
+   говорит «незашифрованное», статус доступен в шапке через i-кнопку). */
+.mx_MessageComposer .mx_E2EIcon,
+.mx_MessageComposer .mx_E2EIconView,
+.mx_MessageComposer_wrapper .mx_E2EIcon,
+.mx_MessageComposer_wrapper .mx_E2EIconView {
+    display: none !important;
+}
+
+/* Крупная аватарка как в TG. ВАЖНО: исключаем _icon (decorated badge),
+   иначе он раздувается до 48px и перекрывает аватар. */
 [class*="RoomListItemView"] .mx_BaseAvatar,
 [class*="RoomListItemView"] [class*="avatar"] img,
-[class*="RoomListItemView"] [class*="Avatar"] {
+[class*="RoomListItemView"] [class*="Avatar"]:not([class*="_icon"]) {
     width: 48px !important;
     height: 48px !important;
     min-width: 48px !important;
@@ -609,11 +641,32 @@ a:focus-visible,
     box-shadow: none !important;
 }
 
-/* ── Buttons — smooth micro-press on click ───────────────────────────────── */
-button:not(:disabled):active,
-[role="button"]:not([aria-disabled="true"]):active {
+/* ── Buttons — smooth micro-press on click.
+   ВАЖНО: исключаем SpaceButton/SpaceItem — transform ломает drag-detection
+   у react-beautiful-dnd (mousedown триггерит и press-animation и drag-start). */
+button:not(:disabled):not(.mx_SpaceButton):active,
+[role="button"]:not([aria-disabled="true"]):not(.mx_SpaceButton):not(.mx_SpaceItem):active {
     transform: scale(0.97);
     transition: transform 0.06s ease;
+}
+
+/* Гарантируем что drag-handle на спейсах не блокируется CSS-ом.
+   react-beautiful-dnd ловит mousedown на .mx_SpaceButton — нужно чтобы
+   pointer-events работали + не было transform/animation в момент press. */
+.mx_SpaceItem,
+.mx_SpaceButton {
+    pointer-events: auto !important;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.mx_SpaceItem .mx_SpaceButton:active,
+.mx_SpaceItem:active .mx_SpaceButton {
+    transform: none !important;
+    transition: none !important;
+}
+/* В состоянии drag — повышаем z-index и подсветка */
+.mx_SpaceItem_dragging {
+    z-index: 9999 !important;
 }
 
 button {
@@ -2045,6 +2098,7 @@ button,
     width: 3px !important;
     background: #3b82f6 !important;
     border-radius: 999px !important;
+    pointer-events: none !important;
 }
 
 /* Подсветка родительского спейса в свёрнутом сайдбаре: если в поддереве
@@ -2070,6 +2124,7 @@ button,
     border-radius: 999px !important;
     opacity: 0.5 !important;
     z-index: 1 !important;
+    pointer-events: none !important;
 }
 
 .mx_SpaceButton_narrow.mx_SpaceButton_active .mx_SpaceButton_avatarPlaceholder {
@@ -2992,19 +3047,22 @@ body .mx_SpotlightDialog_wrapper .mx_Dialog {
 /* список комнат, настройки). Серый bg остаётся ТОЛЬКО в чате (выделение      */
 /* сообщения, контекст-меню реакций).                                          */
 /* ═══════════════════════════════════════════════════════════════════════════ */
-.mx_RoomHeader button:hover,
-.mx_RoomHeader [role="button"]:hover,
-.mx_LeftPanel button:hover,
-.mx_LeftPanel [role="button"]:hover,
+/* Исключения: compound primary/secondary action-кнопки (.cpd-button) и
+   класс [data-kind] от compound — у них собственный bg+text, нельзя
+   делать transparent (текст белый, станет невидимым). */
+.mx_RoomHeader button:hover:not([class*="cpd-button"]):not([data-kind]):not([class*="primary"]),
+.mx_RoomHeader [role="button"]:hover:not([class*="cpd-button"]):not([data-kind]),
+.mx_LeftPanel button:hover:not([class*="cpd-button"]):not([data-kind]):not([class*="primary"]),
+.mx_LeftPanel [role="button"]:hover:not([class*="cpd-button"]):not([data-kind]),
 .mx_LeftPanel a:hover,
-.mx_SpacePanel button:hover,
-.mx_SpacePanel [role="button"]:hover,
-.mx_BaseCard button:hover,
-.mx_BaseCard [role="button"]:hover,
-.mx_RoomSummaryCard button:hover,
-.mx_UserMenu button:hover,
+.mx_SpacePanel button:hover:not([class*="cpd-button"]):not([data-kind]):not([class*="primary"]),
+.mx_SpacePanel [role="button"]:hover:not([class*="cpd-button"]):not([data-kind]),
+.mx_BaseCard button:hover:not([class*="cpd-button"]):not([data-kind]):not([class*="primary"]),
+.mx_BaseCard [role="button"]:hover:not([class*="cpd-button"]):not([data-kind]),
+.mx_RoomSummaryCard button:hover:not([class*="cpd-button"]):not([data-kind]):not([class*="primary"]),
+.mx_UserMenu button:hover:not([class*="cpd-button"]):not([data-kind]),
 [class*="RoomListItemView"]:hover,
-.mx_AccessibleButton:hover {
+.mx_AccessibleButton:hover:not([class*="cpd-button"]):not([data-kind]):not([class*="primary"]) {
     background-color: transparent !important;
 }
 
