@@ -2243,6 +2243,35 @@ button,
     border-left: 1px solid #ededef !important;
 }
 
+/* FacePile в шапке чата (аватар + счётчик участников) — компактная pill */
+.mx_RoomHeader .mx_FacePile {
+    padding: 2px 8px 2px 2px !important;
+    gap: 4px !important;
+    font-size: 12px !important;
+    border-radius: 14px !important;
+    background: transparent !important;
+}
+.mx_RoomHeader .mx_FacePile:hover {
+    background: #f4f4f5 !important;
+}
+.mx_RoomHeader .mx_FacePile .mx_BaseAvatar,
+.mx_RoomHeader .mx_FacePile .mx_BaseAvatar img {
+    width: 22px !important;
+    height: 22px !important;
+}
+
+/* Presence indicator (зелёный кружок «в сети» на аватарках в room list)
+   — дефолтный размер слишком крупный, сжимаем до 10×10 с тонкой обводкой. */
+.mx_WithPresenceIndicator .mx_WithPresenceIndicator_icon {
+    width: 10px !important;
+    height: 10px !important;
+    right: 0 !important;
+    bottom: 0 !important;
+}
+.mx_WithPresenceIndicator .mx_WithPresenceIndicator_icon::before {
+    border-width: 1.5px !important;
+}
+
 /* Горизонтальные разделители: под шапкой чата, под верхней панелью поиска,
    под header-ом списка комнат */
 .mx_RoomHeader {
